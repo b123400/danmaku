@@ -1,7 +1,7 @@
 defmodule DanmakuApi.Comment do
   use DanmakuApi.Web, :model
 
-  @derive {Poison.Encoder, only: [:source, :anilist_id, :episode, :text, :metadata]}
+  @derive {Poison.Encoder, except: [:__meta__]}
   schema "comments" do
     field :source, :string
     field :anilist_id, :integer

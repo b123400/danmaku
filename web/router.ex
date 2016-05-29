@@ -24,5 +24,6 @@ defmodule DanmakuApi.Router do
     pipe_through :api
 
     get "/comments", CommentController, :index
+    get "/comments/add", CommentController, :create
   end
 end
