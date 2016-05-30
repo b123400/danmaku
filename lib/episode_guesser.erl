@@ -3,17 +3,26 @@
 
 % return a char array to elixir, need to_string to make it a string
 guess(Filename, AnilistId) ->
+  Filename1 = remove_rubbish(Filename),
   Finders = [
-    fun()-> ova_oad_special_and_preview(Filename) end,
-    fun()-> number_in_bracket(Filename, AnilistId) end,
-    fun()-> ep_prefix(Filename) end,
-    fun()-> first_sensible_number(Filename, AnilistId) end ],
+    fun()-> ova_oad_special_and_preview(Filename1) end,
+    fun()-> sp_episode(Filename1) end,
+    fun()-> number_in_bracket(Filename1, AnilistId) end,
+    fun() -> ep_suffix(Filename1) end,
+    fun()-> ep_prefix(Filename1) end,
+    fun()-> first_sensible_number(Filename1, AnilistId) end ],
   lists:foldl(fun(Curr, Prev)->
     case Prev of
         notfound -> Curr();
         A -> A
     end
   end, notfound, Finders).
+
+remove_rubbish(Filename) ->
+  No_big5 = re:replace(Filename, "BIG5", ""),
+  {ok, MP} = re:compile("([0-9]+(?:\\.[0-9]+)?)[期季]", [unicode]),
+  No_season = re:replace(No_big5, MP, "", [global]),
+  binary:bin_to_list(iolist_to_binary(No_season)).
 
 % Match numbers in bracket with optional suffix
 % [13], [12.5], [14.5話]
@@ -44,6 +53,19 @@ first_sensible_number(Filename, _AnilistId) ->
       end
   end.
 
+sp_episode(Filename)->
+  case re:run(Filename, "\\W(SP\\W{0,1}[0-9]{1,2})") of
+    nomatch -> notfound;
+    {match, Captured} ->
+      io:format("wwwwww ~p", [Captured]),
+      Ranges = lists:map(fun([_, X | _])-> X end, Captured),
+      Substrings = substrings(Ranges, binary:bin_to_list(Filename)), 
+      case Substrings of
+        [] -> notfound;
+        [First | _] -> {found, First}
+      end
+  end.
+
 ova_oad_special_and_preview(Filename) ->
   case re:run(Filename, "(?:OVA|OAD|Special|Preview|Prev)", [global]) of
     nomatch -> notfound;
@@ -56,12 +78,25 @@ ova_oad_special_and_preview(Filename) ->
       end
   end.
 
-ep_prefix(Filename) ->
-  {ok, MP} = re:compile("(?:EP|第) *([0-9]+(?:\\.[0-9]+)?)", [unicode]),
+ep_suffix(Filename) ->
+  {ok, MP} = re:compile("([0-9]+(?:\\.[0-9]+)?)(?:話|集)", [unicode]),
   case re:run(Filename, MP) of
     nomatch -> notfound;
     {match, [_ , {Pos, Len}]} ->
       {found, string:substr(binary:bin_to_list(Filename), Pos+1, Len)}
+  end.
+
+ep_prefix(Filename) ->
+  {ok, MP} = re:compile("(?:EP|第) *([0-9]+(?:\\.[0-9]+)?)[^期季]", [unicode]),
+  case re:run(Filename, MP, [global]) of
+    nomatch -> notfound;
+    {match, Captured} ->
+      Ranges = lists:map(fun([_, X | _])-> X end, Captured),
+      Substrings = substrings(Ranges, binary:bin_to_list(Filename)),
+      case Substrings of
+        []-> notfound;
+        [First | _] -> {found, First}
+      end
   end.
 
 is_make_sense(String)->
@@ -81,6 +116,8 @@ is_make_sense(String)->
     Num == 720 -> false;
     Num == 576 -> false;
     Num == 480 -> false;
+    % H264
+    Num == 264 -> false;
     true -> true
   end.
 
