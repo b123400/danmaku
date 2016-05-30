@@ -1,6 +1,7 @@
 defmodule DanmakuApi.Episode do
   use DanmakuApi.Web, :model
 
+  @derive {Poison.Encoder, except: [:__meta__]}
   schema "episodes" do
     field :source, :string
     field :source_id, :string

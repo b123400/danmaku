@@ -15,19 +15,27 @@ defmodule DanmakuApi.CommentController do
       conn
       |> put_status(400)
       |> json %{"error": "Missing param? I need `anilist_id` and (`episode` or `filename`)"}
-    end
+    else
 
-    {episode_source, episode} = case param_episode do
-      nil -> guess_episode(filename, anilist_id)
-      a -> {:given, a}
-    end
+      {episode_source, episode} = case param_episode do
+        nil -> guess_episode(filename, anilist_id)
+        a -> {:given, a}
+      end
 
-    comments = Repo.all(Comment)
-    json conn, %{
-      "episode_source": Atom.to_string(episode_source),
-      "episode": episode,
-      "comments": comments
-    }
+      query = Ecto.Query.from c in Comment,
+        where: c.anilist_id == ^anilist_id and c.episode == ^episode
+
+      if source != "all" do
+        query = Ecto.Query.from c in query, where: c.source == ^source
+      end
+
+      comments = Repo.all(query)
+      json conn, %{
+        "episode_source": Atom.to_string(episode_source),
+        "episode": episode,
+        "comments": comments
+      }
+    end
   end
 
   def guess_episode(filename, anilist_id) do
@@ -35,27 +43,47 @@ defmodule DanmakuApi.CommentController do
       :notfound -> {:failed, filename}
       {:found, episode} -> {:detected, to_string episode}
     end
-    # or {:provided, ""} if present from db
+    # or {:user_provided, ""} if present from db
   end
 
   def create(conn, params) do
-    changeset = Comment.changeset(%Comment{}, %{
-      source: "kari",
-      anilist_id: params["anilist_id"],
-      episode: params["episode"],
-      text: params["text"],
-      metadata: case params["metadata"] do
-        nil -> "{}"
-        data -> data
+
+    source = "kari"
+    anilist_id = params["anilist_id"]
+    param_episode = params["episode"]
+    filename = params["filename"]
+    text = params["text"]
+
+    if filename == nil && param_episode == nil do
+      conn
+      |> put_status(400)
+      |> json %{"error": "Missing param? I need `anilist_id` and (`episode` or `filename`)"}
+    else
+
+      {episode_source, episode} = case param_episode do
+        nil -> guess_episode(filename, anilist_id)
+        a -> {:given, a}
       end
-    })
-    case Repo.insert(changeset) do
-      {:ok, comment} ->
-        json conn, comment
-      {:error, changeset} ->
-        errors = changeset.errors
-        |> Enum.into(%{})
-        json conn, %{error: errors}
+
+      changeset = Comment.changeset(%Comment{}, %{
+        source: source,
+        anilist_id: anilist_id,
+        episode: episode,
+        text: text,
+        metadata: params["metadata"] || "{}"
+      })
+      case Repo.insert(changeset) do
+        {:ok, comment} ->
+          json conn, %{
+            "episode_source": Atom.to_string(episode_source),
+            "episode": episode,
+            "comment": comment
+          }
+        {:error, changeset} ->
+          errors = changeset.errors
+          |> Enum.into(%{})
+          json conn, %{error: errors}
+      end
     end
   end
 end

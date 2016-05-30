@@ -26,9 +26,27 @@ defmodule DanmakuApi.EpisodeController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    episode = Repo.get!(Episode, id)
-    render(conn, "show.json", episode: episode)
+  def show(conn, %{"source" => source, "anilist_id" => anilist_id} = params) do
+    filename = params["filename"]
+    source_id = params["source_id"]
+
+    db_episode = Repo.get_by(Episode, %{
+      "source": source,
+      "source_id": source_id || filename,
+      "anilist_id": anilist_id
+    })
+    {episode_source, episode} = case db_episode do
+      nil -> case :episode_guesser.guess(filename, anilist_id) do
+        {:found, num} -> {:detected, num}
+        {:notfound, num} -> {:failed, source_id || filename}
+      end
+      a -> {:user_provided, a}
+    end
+    json conn, %{
+      "episode_source": Atom.to_string(episode_source),
+      "episode": episode
+    }
+    # render(conn, "show.json", episode: episode)
   end
 
   def update(conn, %{"id" => id, "episode" => episode_params}) do

@@ -3,14 +3,14 @@
 
 % return a char array to elixir, need to_string to make it a string
 guess(Filename, AnilistId) ->
-  Filename1 = remove_rubbish(Filename),
+  FilteredFilename = remove_rubbish(Filename),
   Finders = [
-    fun()-> ova_oad_special_and_preview(Filename1) end,
-    fun()-> sp_episode(Filename1) end,
-    fun()-> number_in_bracket(Filename1, AnilistId) end,
-    fun() -> ep_suffix(Filename1) end,
-    fun()-> ep_prefix(Filename1) end,
-    fun()-> first_sensible_number(Filename1, AnilistId) end ],
+    fun()-> ova_oad_special_and_preview(FilteredFilename) end,
+    fun()-> sp_episode(FilteredFilename) end,
+    fun()-> number_in_bracket(FilteredFilename, AnilistId) end,
+    fun()-> ep_suffix(FilteredFilename) end,
+    fun()-> ep_prefix(FilteredFilename) end,
+    fun()-> first_sensible_number(FilteredFilename, AnilistId) end ],
   lists:foldl(fun(Curr, Prev)->
     case Prev of
         notfound -> Curr();
@@ -31,7 +31,7 @@ number_in_bracket(Filename, _AnilistId) ->
     nomatch -> notfound;
     {match, Captured} ->
       Ranges = lists:map(fun([_, X | _])-> X end, Captured),
-      Substrings = substrings(Ranges, binary:bin_to_list(Filename)),
+      Substrings = substrings(Ranges, Filename),
       Filtered = filter_nonsense(Substrings),
       case Filtered of
         []-> notfound;
@@ -45,7 +45,7 @@ first_sensible_number(Filename, _AnilistId) ->
     {match, Captured} ->
       % io:format("~p", [Captured]),
       Ranges = lists:map(fun(X)-> hd(X) end, Captured),
-      Substrings = substrings(Ranges, binary:bin_to_list(Filename)),
+      Substrings = substrings(Ranges, Filename),
       Filtered = filter_nonsense(Substrings),
       case Filtered of
         []-> notfound;
@@ -59,7 +59,7 @@ sp_episode(Filename)->
     {match, Captured} ->
       io:format("wwwwww ~p", [Captured]),
       Ranges = lists:map(fun([_, X | _])-> X end, Captured),
-      Substrings = substrings(Ranges, binary:bin_to_list(Filename)), 
+      Substrings = substrings(Ranges, Filename), 
       case Substrings of
         [] -> notfound;
         [First | _] -> {found, First}
@@ -71,7 +71,7 @@ ova_oad_special_and_preview(Filename) ->
     nomatch -> notfound;
     {match, Captured} ->
       Ranges = lists:map(fun(X)-> hd(X) end, Captured),
-      Substrings = substrings(Ranges, binary:bin_to_list(Filename)),
+      Substrings = substrings(Ranges, Filename),
       case Substrings of
         []-> notfound;
         [First | _] -> {found, First}
@@ -83,7 +83,7 @@ ep_suffix(Filename) ->
   case re:run(Filename, MP) of
     nomatch -> notfound;
     {match, [_ , {Pos, Len}]} ->
-      {found, string:substr(binary:bin_to_list(Filename), Pos+1, Len)}
+      {found, string:substr(Filename, Pos+1, Len)}
   end.
 
 ep_prefix(Filename) ->
@@ -92,7 +92,7 @@ ep_prefix(Filename) ->
     nomatch -> notfound;
     {match, Captured} ->
       Ranges = lists:map(fun([_, X | _])-> X end, Captured),
-      Substrings = substrings(Ranges, binary:bin_to_list(Filename)),
+      Substrings = substrings(Ranges, Filename),
       case Substrings of
         []-> notfound;
         [First | _] -> {found, First}
