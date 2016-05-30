@@ -18,29 +18,14 @@ first_sensible_number(Filename, AnilistId) ->
   case re:run(Filename, "[0-9]+(?:\\.[0-9]+)?", [global]) of
     nomatch -> notfound;
     {match, Captured} ->
+      io:format("~p", [Captured]),
       Ranges = lists:map(fun(X)-> hd(X) end, Captured),
       Substrings = substrings(Ranges, binary:bin_to_list(Filename)),
-      Numbers = lists:filtermap(
-        fun(Str)->
-          case string:to_float(Str) of
-            {error, _} -> false;
-            % Save the original string becoz float_to_string is not accurate
-            {Num, _}-> {true, {Num, Str}}
-          end
-        end,
-        Substrings),
-      % > 1000 is not an episode number
-      No_Too_large = lists:filter(fun({Num, _})-> Num < 1000 end, Numbers),
-      % These numbers are usually resolution
-      No_Resolution = lists:filter(fun({Num, _})->
-        Num /= 960 andalso
-        Num /= 720 andalso
-        Num /= 576 andalso
-        Num /= 480 end, No_Too_large),
+      Filtered = filter_nonsense(Substrings),
       % TODO: Fetch anilist and filter number > total ep count
-      case No_Resolution of
+      case Filtered of
         []-> notfound;
-        [{_, First} | _] -> {found, First}
+        [First | _] -> {found, First}
       end
   end.
 
@@ -63,6 +48,30 @@ ep_prefix(Filename) ->
     {match, [_ , {Pos, Len}]} ->
       {found, string:substr(binary:bin_to_list(Filename), Pos+1, Len)}
   end.
+
+is_make_sense(String)->
+  Num = case string:to_float(String) of
+    {error, _} ->
+      case string:to_integer(String) of
+        {error, _} -> false;
+        {N, _} -> N
+      end;
+    {N, _} -> N
+  end,
+  if
+    % > 1000 is not an episode number
+    Num > 1000 -> false;
+    % These numbers are usually resolution
+    Num == 960 -> false;
+    Num == 720 -> false;
+    Num == 576 -> false;
+    Num == 480 -> false;
+    true -> true
+  end.
+
+filter_nonsense(Strings)->
+  % TODO: Fetch anilist and filter number > total ep count
+  lists:filter(fun(Str)-> is_make_sense(Str) end, Strings).
 
 substrings(Ranges, SourceString) ->
   lists:map(fun({Pos, Len}) ->
