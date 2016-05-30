@@ -1,5 +1,4 @@
 require IEx;
-require episode_guesser;
 
 defmodule DanmakuApi.CommentController do
   use DanmakuApi.Web, :controller
@@ -19,19 +18,20 @@ defmodule DanmakuApi.CommentController do
     end
 
     {episode_source, episode} = case param_episode do
-      nil -> guess_episode(filename)
+      nil -> guess_episode(filename, anilist_id)
       a -> {:given, a}
     end
 
     comments = Repo.all(Comment)
     json conn, %{
-      "episode": Atom.to_string(episode_source),
+      "episode_source": Atom.to_string(episode_source),
+      "episode": episode,
       "comments": comments
     }
   end
 
-  def guess_episode(filename) do
-    {:detected, "123"} # or {:provided, ""}
+  def guess_episode(filename, anilist_id) do
+    {:detected, :episode_guesser.guess(filename, anilist_id)} # or {:provided, ""}
   end
 
   def create(conn, params) do
