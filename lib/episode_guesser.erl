@@ -5,6 +5,7 @@
 guess(Filename, AnilistId) ->
   Finders = [
     fun()-> ova_oad_special_and_preview(Filename) end,
+    fun()-> number_in_bracket(Filename, AnilistId) end,
     fun()-> ep_prefix(Filename) end,
     fun()-> first_sensible_number(Filename, AnilistId) end ],
   lists:foldl(fun(Curr, Prev)->
@@ -14,15 +15,29 @@ guess(Filename, AnilistId) ->
     end
   end, notfound, Finders).
 
-first_sensible_number(Filename, AnilistId) ->
+% Match numbers in bracket with optional suffix
+% [13], [12.5], [14.5話]
+number_in_bracket(Filename, _AnilistId) ->
+  case re:run(Filename, "\\[([0-9]+(?:\\.[0-9]+)?)[^\\]]*\\]", [global]) of
+    nomatch -> notfound;
+    {match, Captured} ->
+      Ranges = lists:map(fun([_, X | _])-> X end, Captured),
+      Substrings = substrings(Ranges, binary:bin_to_list(Filename)),
+      Filtered = filter_nonsense(Substrings),
+      case Filtered of
+        []-> notfound;
+        [First | _] -> {found, First}
+      end
+  end.
+
+first_sensible_number(Filename, _AnilistId) ->
   case re:run(Filename, "[0-9]+(?:\\.[0-9]+)?", [global]) of
     nomatch -> notfound;
     {match, Captured} ->
-      io:format("~p", [Captured]),
+      % io:format("~p", [Captured]),
       Ranges = lists:map(fun(X)-> hd(X) end, Captured),
       Substrings = substrings(Ranges, binary:bin_to_list(Filename)),
       Filtered = filter_nonsense(Substrings),
-      % TODO: Fetch anilist and filter number > total ep count
       case Filtered of
         []-> notfound;
         [First | _] -> {found, First}
