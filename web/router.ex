@@ -23,7 +23,10 @@ defmodule DanmakuApi.Router do
   scope "/api", DanmakuApi do
     pipe_through :api
 
-    get "/comments", CommentController, :index
-    get "/comments/add", CommentController, :create
+    get  "/comments", CommentController, :index
+    get  "/comments/add", CommentController, :create
+    post "/comments/add", CommentController, :create
+
+    post "/episodes", EpisodeController, :update
   end
 end

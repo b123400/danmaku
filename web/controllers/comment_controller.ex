@@ -1,13 +1,37 @@
 require IEx;
+require episode_guesser;
 
 defmodule DanmakuApi.CommentController do
   use DanmakuApi.Web, :controller
 
   alias DanmakuApi.Comment
 
-  def index(conn, _params) do
+  def index(conn, params) do
+    source = params["source"]
+    anilist_id = params["anilist_id"]
+    param_episode = params["episode"]
+    filename = params["filename"]
+
+    if anilist_id == nil || (param_episode == nil && filename == nil) do
+      conn
+      |> put_status(400)
+      |> json %{"error": "Missing param? I need `anilist_id` and (`episode` or `filename`)"}
+    end
+
+    {episode_source, episode} = case param_episode do
+      nil -> guess_episode(filename)
+      a -> {:given, a}
+    end
+
     comments = Repo.all(Comment)
-    json conn, comments
+    json conn, %{
+      "episode": Atom.to_string(episode_source),
+      "comments": comments
+    }
+  end
+
+  def guess_episode(filename) do
+    {:detected, "123"} # or {:provided, ""}
   end
 
   def create(conn, params) do
