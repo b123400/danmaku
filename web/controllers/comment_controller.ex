@@ -31,7 +31,11 @@ defmodule DanmakuApi.CommentController do
   end
 
   def guess_episode(filename, anilist_id) do
-    {:detected, :episode_guesser.guess(filename, anilist_id)} # or {:provided, ""}
+    case :episode_guesser.guess(filename, anilist_id) do
+      :notfound -> {:failed, filename}
+      {:found, episode} -> {:detected, episode}
+    end
+    # or {:provided, ""} if present from db
   end
 
   def create(conn, params) do
