@@ -18,7 +18,7 @@ defmodule DanmakuApi.CommentController do
     else
 
       {episode_source, episode} = case param_episode do
-        nil -> guess_episode(filename, anilist_id)
+        nil -> guess_episode(source, filename, anilist_id)
         a -> {:given, a}
       end
 
@@ -38,12 +38,20 @@ defmodule DanmakuApi.CommentController do
     end
   end
 
-  def guess_episode(filename, anilist_id) do
-    case :episode_guesser.guess(filename, anilist_id) do
-      :notfound -> {:failed, filename}
-      {:found, episode} -> {:detected, to_string episode}
+  def guess_episode(source, filename, anilist_id) do
+    db_episode = Repo.get_by(Episode, %{
+      "source": source,
+      "source_id": filename,
+      "anilist_id": anilist_id
+    })
+    if db_episode != nil do
+      {:user_provided, db_episode.episode}
+    else
+      case :episode_guesser.guess(filename, anilist_id) do
+        :notfound -> {:failed, filename}
+        {:found, episode} -> {:detected, to_string episode}
+      end
     end
-    # or {:user_provided, ""} if present from db
   end
 
   def create(conn, params) do
@@ -61,7 +69,7 @@ defmodule DanmakuApi.CommentController do
     else
 
       {episode_source, episode} = case param_episode do
-        nil -> guess_episode(filename, anilist_id)
+        nil -> guess_episode(source, filename, anilist_id)
         a -> {:given, a}
       end
 

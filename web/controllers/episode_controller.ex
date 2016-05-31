@@ -33,7 +33,7 @@ defmodule DanmakuApi.EpisodeController do
     {episode_source, episode} = case db_episode do
       nil -> case :episode_guesser.guess(filename, anilist_id) do
         {:found, num} -> {:detected, to_string num}
-        {:notfound, num} -> {:failed, source_id || filename}
+        :notfound -> {:failed, source_id || filename}
       end
       a -> {:user_provided, a.episode}
     end
