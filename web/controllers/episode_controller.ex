@@ -5,26 +5,21 @@ defmodule DanmakuApi.EpisodeController do
 
   plug :scrub_params, "episode" when action in [:create, :update]
 
-  def index(conn, _params) do
-    episodes = Repo.all(Episode)
-    render(conn, "index.json", episodes: episodes)
-  end
+  # def create(conn, %{"episode" => episode_params}) do
+  #   changeset = Episode.changeset(%Episode{}, episode_params)
 
-  def create(conn, %{"episode" => episode_params}) do
-    changeset = Episode.changeset(%Episode{}, episode_params)
-
-    case Repo.insert(changeset) do
-      {:ok, episode} ->
-        conn
-        |> put_status(:created)
-        |> put_resp_header("location", episode_path(conn, :show, episode))
-        |> render("show.json", episode: episode)
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(DanmakuApi.ChangesetView, "error.json", changeset: changeset)
-    end
-  end
+  #   case Repo.insert(changeset) do
+  #     {:ok, episode} ->
+  #       conn
+  #       |> put_status(:created)
+  #       |> put_resp_header("location", episode_path(conn, :show, episode))
+  #       |> render("show.json", episode: episode)
+  #     {:error, changeset} ->
+  #       conn
+  #       |> put_status(:unprocessable_entity)
+  #       |> render(DanmakuApi.ChangesetView, "error.json", changeset: changeset)
+  #   end
+  # end
 
   def show(conn, %{"source" => source, "anilist_id" => anilist_id} = params) do
     filename = params["filename"]
@@ -37,10 +32,10 @@ defmodule DanmakuApi.EpisodeController do
     })
     {episode_source, episode} = case db_episode do
       nil -> case :episode_guesser.guess(filename, anilist_id) do
-        {:found, num} -> {:detected, num}
+        {:found, num} -> {:detected, to_string num}
         {:notfound, num} -> {:failed, source_id || filename}
       end
-      a -> {:user_provided, a}
+      a -> {:user_provided, a.episode}
     end
     json conn, %{
       "episode_source": Atom.to_string(episode_source),
@@ -49,17 +44,39 @@ defmodule DanmakuApi.EpisodeController do
     # render(conn, "show.json", episode: episode)
   end
 
-  def update(conn, %{"id" => id, "episode" => episode_params}) do
-    episode = Repo.get!(Episode, id)
-    changeset = Episode.changeset(episode, episode_params)
+  def update(conn, %{"source" => source, "anilist_id" => anilist_id, "episode" => episode} = params) do
 
-    case Repo.update(changeset) do
+    filename = params["filename"]
+    source_id = params["source_id"]
+
+    db_episode = Repo.get_by(Episode, %{
+      "source": source,
+      "source_id": source_id || filename,
+      "anilist_id": anilist_id
+    })
+
+    modification = case db_episode do
+      nil ->
+        changeset = Episode.changeset(%Episode{}, %{
+          "source": source,
+          "source_id": source_id || filename,
+          "anilist_id": anilist_id,
+          "episode": episode
+          })
+        Repo.insert(changeset)
+
+      _ ->
+        changeset = Episode.changeset(db_episode, %{ "episode": episode })
+        Repo.update(changeset)
+    end
+
+    case modification do
       {:ok, episode} ->
-        render(conn, "show.json", episode: episode)
+        json conn, episode
       {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(DanmakuApi.ChangesetView, "error.json", changeset: changeset)
+        errors = changeset.errors
+        |> Enum.into(%{})
+        json conn, %{error: errors}
     end
   end
 

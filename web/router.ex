@@ -28,7 +28,7 @@ defmodule DanmakuApi.Router do
     post "/comments/add", CommentController, :create
 
     get "/episode", EpisodeController, :show
-    post "/episodes", EpisodeController, :update
+    post "/episode", EpisodeController, :update
 
     get "/episode/guess", EpisodeController, :guess
   end
