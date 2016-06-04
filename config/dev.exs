@@ -34,8 +34,8 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
 config :danmaku_api, DanmakuApi.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "b123400",
+  adapter: Ecto.Adapters.MySQL,
+  username: "root",
   password: "",
   database: "danmaku_api_dev",
   hostname: "localhost",
