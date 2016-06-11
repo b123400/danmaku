@@ -3,11 +3,18 @@ module Main where
 import Prelude
 
 import Control.Monad.Eff (Eff())
+import Control.Monad.Eff.Class (liftEff)
 
 import Halogen
 import Halogen.Util (awaitBody, runHalogenAff)
 import Halogen.HTML.Indexed as H
 import Halogen.HTML.Events.Indexed as E
+import DOM.HTML.Types (HTMLElement(), htmlElementToNode)
+import DOM.Node.Document (createElement)
+import DOM.Node.Node (appendChild, ownerDocument)
+import DOM.Node.Types (Node, elementToNode)
+import Data.Maybe (Maybe(Just))
+import Data.Nullable (toMaybe)
 
 data Query a = ToggleState a
 
@@ -41,7 +48,16 @@ ui = component { render, eval }
     modify (\state -> { on: not state.on })
     pure next
 
+addOverlay :: HTMLElement -> Eff (HalogenEffects ()) Node
+addOverlay body =
+  (toMaybe <$> ownerDocument bodyNode) >>= \(Just document)->
+  createElement "div" document >>= \newElement ->
+  appendChild (elementToNode newElement) bodyNode
+  where
+  bodyNode = htmlElementToNode body
+
 main :: Eff (HalogenEffects ()) Unit
-main = runHalogenAff do
-  body <- awaitBody
+main = runHalogenAff $
+  awaitBody >>= \body ->
+  liftEff (addOverlay body) >>= \_ ->
   runUI ui initialState body
