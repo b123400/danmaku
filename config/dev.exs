@@ -38,5 +38,5 @@ config :danmaku_api, DanmakuApi.Repo,
   username: "root",
   password: "",
   database: "danmaku_api_dev",
-  hostname: "localhost",
+  hostname: "127.0.0.1",
   pool_size: 10

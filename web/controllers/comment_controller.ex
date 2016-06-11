@@ -14,7 +14,7 @@ defmodule DanmakuApi.CommentController do
     if anilist_id == nil || (param_episode == nil && filename == nil) do
       conn
       |> put_status(400)
-      |> json %{"error": "Missing param? I need `anilist_id` and (`episode` or `filename`)"}
+      |> json(%{"error": "Missing param? I need `anilist_id` and (`episode` or `filename`)"})
     else
 
       {episode_source, episode} = case param_episode do
@@ -65,7 +65,7 @@ defmodule DanmakuApi.CommentController do
     if filename == nil && param_episode == nil do
       conn
       |> put_status(400)
-      |> json %{"error": "Missing param? I need `anilist_id` and (`episode` or `filename`)"}
+      |> json(%{"error": "Missing param? I need `anilist_id` and (`episode` or `filename`)"})
     else
 
       {episode_source, episode} = case param_episode do
