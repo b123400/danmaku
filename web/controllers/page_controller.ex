@@ -2,6 +2,8 @@ defmodule DanmakuApi.PageController do
   use DanmakuApi.Web, :controller
 
   def index(conn, _params) do
-    render conn, "index.html"
+    conn
+    |> put_layout(false)
+    |> render "test.html"
   end
 end

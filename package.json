@@ -16,6 +16,6 @@
     "pulp": "^8.2.1"
   },
   "scripts": {
-    "purs": "pulp --bower-file purescript/bower.json browserify -O --to ../web/static/js/main.js"
+    "purs": "pulp --bower-file purescript/bower.json browserify -O --to ../web/static/assets/main.js"
   }
 }

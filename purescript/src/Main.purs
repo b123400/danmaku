@@ -4,6 +4,13 @@ import Prelude
 
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class (liftEff)
+import Control.Apply ((*>))
+import Control.Monad.Eff.Exception (EXCEPTION(), throw)
+
+import Data.Maybe (Maybe(Just))
+import Data.Either (Either(..))
+import Data.Nullable (toMaybe)
+import Data.Foreign (toForeign)
 
 import Halogen
 import Halogen.Util (awaitBody, runHalogenAff)
@@ -14,11 +21,7 @@ import DOM.Node.Document (createElement)
 import DOM.Node.Element (setId)
 import DOM.Node.Node (appendChild, ownerDocument)
 import DOM.Node.Types (Element(), ElementId(ElementId), Node, elementToNode)
-import Data.Maybe (Maybe(Just))
-import Data.Either (Either(..))
-import Data.Nullable (toMaybe)
-import Data.Foreign(toForeign)
-import Control.Monad.Eff.Exception (EXCEPTION(), throw)
+
 
 data Query a = ToggleState a
 
@@ -62,8 +65,8 @@ addOverlay :: HTMLElement -> Eff (HalogenEffects ()) HTMLElement
 addOverlay body =
   (toMaybe <$> ownerDocument bodyNode) >>= \(Just document)->
   createElement "div" document >>= \newElement ->
-  setId (ElementId "commentsOverlay") newElement >>= \_ ->
-  appendChild (elementToNode newElement) bodyNode >>= \_ ->
+  setId (ElementId "commentsOverlay") newElement *>
+  appendChild (elementToNode newElement) bodyNode *>
   forceHTMLElement newElement
   where
   bodyNode = htmlElementToNode body
