@@ -9,12 +9,16 @@ import Halogen
 import Halogen.Util (awaitBody, runHalogenAff)
 import Halogen.HTML.Indexed as H
 import Halogen.HTML.Events.Indexed as E
-import DOM.HTML.Types (HTMLElement(), htmlElementToNode)
+import DOM.HTML.Types (HTMLElement(), htmlElementToNode, readHTMLElement, htmlDivElementToHTMLElement)
 import DOM.Node.Document (createElement)
+import DOM.Node.Element (setId)
 import DOM.Node.Node (appendChild, ownerDocument)
-import DOM.Node.Types (Node, elementToNode)
+import DOM.Node.Types (Element(), ElementId(ElementId), Node, elementToNode)
 import Data.Maybe (Maybe(Just))
+import Data.Either (Either(..))
 import Data.Nullable (toMaybe)
+import Data.Foreign(toForeign)
+import Control.Monad.Eff.Exception (EXCEPTION(), throw)
 
 data Query a = ToggleState a
 
@@ -48,16 +52,24 @@ ui = component { render, eval }
     modify (\state -> { on: not state.on })
     pure next
 
-addOverlay :: HTMLElement -> Eff (HalogenEffects ()) Node
+forceHTMLElement :: forall eff. Element -> Eff (err :: EXCEPTION | eff) HTMLElement
+forceHTMLElement element =
+  case (readHTMLElement $ toForeign element) of
+    Left a -> throw $ show a
+    Right b -> return b
+
+addOverlay :: HTMLElement -> Eff (HalogenEffects ()) HTMLElement
 addOverlay body =
   (toMaybe <$> ownerDocument bodyNode) >>= \(Just document)->
   createElement "div" document >>= \newElement ->
-  appendChild (elementToNode newElement) bodyNode
+  setId (ElementId "commentsOverlay") newElement >>= \_ ->
+  appendChild (elementToNode newElement) bodyNode >>= \_ ->
+  forceHTMLElement newElement
   where
   bodyNode = htmlElementToNode body
 
 main :: Eff (HalogenEffects ()) Unit
 main = runHalogenAff $
   awaitBody >>= \body ->
-  liftEff (addOverlay body) >>= \_ ->
-  runUI ui initialState body
+  liftEff (addOverlay body) >>= \node ->
+  runUI ui initialState node
