@@ -32,7 +32,11 @@ exports.config = {
     // This option sets where we should place non-css and non-js assets in.
     // By default, we set this to "/web/static/assets". Files in this directory
     // will be copied to `paths.public`, which is "priv/static" by default.
-    assets: /^(web\/static\/assets)/
+    assets: /^(web\/static\/assets)/,
+
+    ignored: [
+      /^elm/
+    ]
   },
 
   // Phoenix paths configuration
@@ -40,7 +44,8 @@ exports.config = {
     // Dependencies and current project directories to watch
     watched: [
       "web/static",
-      "test/static"
+      "test/static",
+      "elm"
     ],
 
     // Where to compile files to
@@ -52,6 +57,22 @@ exports.config = {
     babel: {
       // Do not use ES6 compiler in vendor code
       ignore: [/web\/static\/vendor/]
+    },
+    elmBrunch: {
+      // Set to path where elm-package.json is located, defaults to project root (optional)
+      // if your elm files are not in /app then make sure to configure paths.watched in main brunch config
+      elmFolder: 'elm',
+
+      // Set to the elm file(s) containing your "main" function
+      // `elm make` handles all elm dependencies (required)
+      // relative to `elmFolder`
+      mainModules: ['Menu.elm'],
+
+      // Defaults to 'js/' folder in paths.public (optional)
+      outputFolder: '../web/static/vendor',
+
+      // optional: add some parameters that are passed to elm-make
+      makeParameters : []
     }
   },
 
