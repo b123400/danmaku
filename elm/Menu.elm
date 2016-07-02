@@ -21,7 +21,8 @@ main =
     }
 
 type Msg
-  = SwitchSource CommentSource
+  = SetFlags Flags
+  | SwitchSource CommentSource
   | SetComments (List Comment)
 
 type CommentSource = Kari | None
@@ -48,14 +49,21 @@ init flags =
   , Cmd.none
   )
 
-subscriptions _ = Sub.none
-
 port comments : Json.Value -> Cmd msg
 sendComments = comments << C.encodeList
 
 
+port flags : (Flags -> msg) -> Sub msg
+
+subscriptions _ = flags SetFlags
+
+
 update msg (Model model) =
   case msg of
+    SetFlags flags ->
+      Model { model | flags = flags }
+      ! []
+
     SwitchSource source ->
       Model
         { model | source = source }

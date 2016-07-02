@@ -6,18 +6,29 @@ var _user$project$Menu$selectedText = function (source) {
 		return 'None';
 	}
 };
-var _user$project$Menu$subscriptions = function (_p1) {
-	return _elm_lang$core$Platform_Sub$none;
-};
 var _user$project$Menu$comments = _elm_lang$core$Native_Platform.outgoingPort(
 	'comments',
 	function (v) {
 		return v;
 	});
-var _user$project$Menu$sendComments = function (_p2) {
+var _user$project$Menu$sendComments = function (_p1) {
 	return _user$project$Menu$comments(
-		_user$project$Comment$encodeList(_p2));
+		_user$project$Comment$encodeList(_p1));
 };
+var _user$project$Menu$flags = _elm_lang$core$Native_Platform.incomingPort(
+	'flags',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'anilistId', _elm_lang$core$Json_Decode$int),
+		function (anilistId) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'filename', _elm_lang$core$Json_Decode$string),
+				function (filename) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{anilistId: anilistId, filename: filename});
+				});
+		}));
 var _user$project$Menu$Flags = F2(
 	function (a, b) {
 		return {anilistId: a, filename: b};
@@ -39,8 +50,8 @@ var _user$project$Menu$loadComment = F3(
 						[])));
 		};
 		var task = function () {
-			var _p3 = source;
-			if (_p3.ctor === 'None') {
+			var _p2 = source;
+			if (_p2.ctor === 'None') {
 				return _elm_lang$core$Task$succeed(
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -52,6 +63,12 @@ var _user$project$Menu$loadComment = F3(
 	});
 var _user$project$Menu$SwitchSource = function (a) {
 	return {ctor: 'SwitchSource', _0: a};
+};
+var _user$project$Menu$SetFlags = function (a) {
+	return {ctor: 'SetFlags', _0: a};
+};
+var _user$project$Menu$subscriptions = function (_p3) {
+	return _user$project$Menu$flags(_user$project$Menu$SetFlags);
 };
 var _user$project$Menu$None = {ctor: 'None'};
 var _user$project$Menu$Kari = {ctor: 'Kari'};
@@ -138,38 +155,48 @@ var _user$project$Menu$update = F2(
 		var _p8 = _p7;
 		var _p12 = _p8._0;
 		var _p9 = msg;
-		if (_p9.ctor === 'SwitchSource') {
-			var _p10 = _p9._0;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$Menu$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p12,
-						{source: _p10})),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A3(_user$project$Menu$loadComment, _p10, _p12.flags.anilistId, _p12.flags.filename),
-						A3(
-						_elm_lang$core$Task$perform,
-						_elm_lang$core$Basics$identity,
-						_elm_lang$core$Basics$identity,
-						_elm_lang$core$Task$succeed(
-							_user$project$Menu$SetComments(
-								_elm_lang$core$Native_List.fromArray(
-									[]))))
-					]));
-		} else {
-			var _p11 = _p9._0;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$Menu$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p12,
-						{comments: _p11})),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_user$project$Menu$sendComments(_p11)
-					]));
+		switch (_p9.ctor) {
+			case 'SetFlags':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{flags: _p9._0})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'SwitchSource':
+				var _p10 = _p9._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{source: _p10})),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A3(_user$project$Menu$loadComment, _p10, _p12.flags.anilistId, _p12.flags.filename),
+							A3(
+							_elm_lang$core$Task$perform,
+							_elm_lang$core$Basics$identity,
+							_elm_lang$core$Basics$identity,
+							_elm_lang$core$Task$succeed(
+								_user$project$Menu$SetComments(
+									_elm_lang$core$Native_List.fromArray(
+										[]))))
+						]));
+			default:
+				var _p11 = _p9._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{comments: _p11})),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$Menu$sendComments(_p11)
+						]));
 		}
 	});
 var _user$project$Menu$main = {
