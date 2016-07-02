@@ -33,6 +33,9 @@ var _user$project$Menu$Flags = F2(
 	function (a, b) {
 		return {anilistId: a, filename: b};
 	});
+var _user$project$Menu$ComposerMsg = function (a) {
+	return {ctor: 'ComposerMsg', _0: a};
+};
 var _user$project$Menu$SetComments = function (a) {
 	return {ctor: 'SetComments', _0: a};
 };
@@ -56,7 +59,7 @@ var _user$project$Menu$loadComment = F3(
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			} else {
-				return A2(_user$project$Kari$getComments, anilistId, filename);
+				return A2(_user$project$API$getComments, anilistId, filename);
 			}
 		}();
 		return A3(_elm_lang$core$Task$perform, fail, success, task);
@@ -131,7 +134,11 @@ var _user$project$Menu$view = function (_p4) {
 							',',
 							A2(_elm_lang$core$List$map, _user$project$Comment$text, _p6.comments)))
 					])),
-				_user$project$Menu$switcher
+				_user$project$Menu$switcher,
+				A2(
+				_elm_lang$html$Html_App$map,
+				_user$project$Menu$ComposerMsg,
+				_user$project$MenuComposer$view(_p6.composer))
 			]));
 };
 var _user$project$Menu$Model = function (a) {
@@ -145,7 +152,8 @@ var _user$project$Menu$init = function (flags) {
 				source: _user$project$Menu$Kari,
 				comments: _elm_lang$core$Native_List.fromArray(
 					[]),
-				flags: flags
+				flags: flags,
+				composer: _user$project$MenuComposer$init(flags)
 			}),
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
@@ -153,29 +161,33 @@ var _user$project$Menu$init = function (flags) {
 var _user$project$Menu$update = F2(
 	function (msg, _p7) {
 		var _p8 = _p7;
-		var _p12 = _p8._0;
+		var _p14 = _p8._0;
 		var _p9 = msg;
 		switch (_p9.ctor) {
 			case 'SetFlags':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_user$project$Menu$Model(
-						_elm_lang$core$Native_Utils.update(
-							_p12,
-							{flags: _p9._0})),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'SwitchSource':
 				var _p10 = _p9._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p12,
-							{source: _p10})),
+							_p14,
+							{
+								flags: _p10,
+								composer: A2(_user$project$MenuComposer$updateEnv, _p14.composer, _p10)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'SwitchSource':
+				var _p11 = _p9._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p14,
+							{source: _p11})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p10, _p12.flags.anilistId, _p12.flags.filename),
+							A3(_user$project$Menu$loadComment, _p11, _p14.flags.anilistId, _p14.flags.filename),
 							A3(
 							_elm_lang$core$Task$perform,
 							_elm_lang$core$Basics$identity,
@@ -185,17 +197,31 @@ var _user$project$Menu$update = F2(
 									_elm_lang$core$Native_List.fromArray(
 										[]))))
 						]));
-			default:
-				var _p11 = _p9._0;
+			case 'SetComments':
+				var _p12 = _p9._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p12,
-							{comments: _p11})),
+							_p14,
+							{comments: _p12})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_user$project$Menu$sendComments(_p11)
+							_user$project$Menu$sendComments(_p12)
+						]));
+			default:
+				var _p13 = A2(_user$project$MenuComposer$update, _p9._0, _p14.composer);
+				var composerModel = _p13._0;
+				var cmd = _p13._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p14,
+							{composer: composerModel})),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(_elm_lang$core$Platform_Cmd$map, _user$project$Menu$ComposerMsg, cmd)
 						]));
 		}
 	});

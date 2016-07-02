@@ -1,0 +1,68 @@
+var _user$project$API$decodeCommentResponse = A2(_elm_lang$core$Json_Decode_ops[':='], 'comment', _user$project$Comment$decode);
+var _user$project$API$decodeCommentsResponse = A2(_elm_lang$core$Json_Decode_ops[':='], 'comments', _user$project$Comment$decodeList);
+var _user$project$API$getErrorMessage = function (error) {
+	var _p0 = error;
+	switch (_p0.ctor) {
+		case 'Timeout':
+			return 'Timeout';
+		case 'NetworkError':
+			return 'Network Error';
+		case 'UnexpectedPayload':
+			return A2(_elm_lang$core$String$append, 'Unexpected Payload', _p0._0);
+		default:
+			return A2(
+				_elm_lang$core$String$join,
+				',',
+				_elm_lang$core$Native_List.fromArray(
+					[
+						'BadResponse',
+						_elm_lang$core$Basics$toString(_p0._0),
+						_p0._1
+					]));
+	}
+};
+var _user$project$API$postCommentUrl = '/api/comments/add';
+var _user$project$API$getCommentUrl = F2(
+	function (anilistId, filename) {
+		return A2(
+			_evancz$elm_http$Http$url,
+			'/api/comments',
+			_elm_lang$core$Native_List.fromArray(
+				[
+					{
+					ctor: '_Tuple2',
+					_0: 'anilist_id',
+					_1: _elm_lang$core$Basics$toString(anilistId)
+				},
+					{ctor: '_Tuple2', _0: 'filename', _1: filename},
+					{ctor: '_Tuple2', _0: 'source', _1: 'kari'}
+				]));
+	});
+var _user$project$API$postComment = F3(
+	function (anilistId, filename, text) {
+		var body = _evancz$elm_http$Http$multipart(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_evancz$elm_http$Http$stringData,
+					'anilist_id',
+					_elm_lang$core$Basics$toString(anilistId)),
+					A2(_evancz$elm_http$Http$stringData, 'filename', filename),
+					A2(_evancz$elm_http$Http$stringData, 'text', text),
+					A2(_evancz$elm_http$Http$stringData, 'source', 'kari')
+				]));
+		return A2(
+			_elm_lang$core$Task$mapError,
+			_user$project$API$getErrorMessage,
+			A3(_evancz$elm_http$Http$post, _user$project$API$decodeCommentResponse, _user$project$API$postCommentUrl, body));
+	});
+var _user$project$API$getComments = F2(
+	function (anilistId, filename) {
+		return A2(
+			_elm_lang$core$Task$mapError,
+			_user$project$API$getErrorMessage,
+			A2(
+				_evancz$elm_http$Http$get,
+				_user$project$API$decodeCommentsResponse,
+				A2(_user$project$API$getCommentUrl, anilistId, filename)));
+	});

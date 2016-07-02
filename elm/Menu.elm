@@ -6,10 +6,11 @@ import Html.Events exposing (onClick)
 import Platform.Sub as Sub
 import Platform.Cmd as Cmd exposing ((!))
 import Task
+import Json.Encode as Json
 import String
 import Comment as C exposing (Comment)
-import Kari
-import Json.Encode as Json
+import API
+import MenuComposer as MC
 import Debug
 
 main =
@@ -24,6 +25,7 @@ type Msg
   = SetFlags Flags
   | SwitchSource CommentSource
   | SetComments (List Comment)
+  | ComposerMsg MC.Msg
 
 type CommentSource = Kari | None
 
@@ -31,6 +33,7 @@ type Model = Model
   { source : CommentSource
   , comments : List Comment
   , flags : Flags
+  , composer : MC.Model
   }
 
 type alias Flags =
@@ -45,6 +48,7 @@ init flags =
       { source = Kari
       , comments = []
       , flags = flags
+      , composer = MC.init flags
       }
   , Cmd.none
   )
@@ -61,7 +65,11 @@ subscriptions _ = flags SetFlags
 update msg (Model model) =
   case msg of
     SetFlags flags ->
-      Model { model | flags = flags }
+      Model
+        { model
+        | flags = flags 
+        , composer = MC.updateEnv model.composer flags
+        }
       ! []
 
     SwitchSource source ->
@@ -75,6 +83,9 @@ update msg (Model model) =
       Model { model | comments = c }
       ! [ sendComments c ]
 
+    ComposerMsg msg ->
+      let (composerModel, cmd) = MC.update msg model.composer
+      in Model { model | composer = composerModel } ! [Cmd.map ComposerMsg cmd]
 
 view : Model -> Html Msg
 view (Model model) =
@@ -86,6 +97,8 @@ view (Model model) =
                |> text
              ]
     , switcher
+    , MC.view model.composer
+      |> Html.map ComposerMsg
     ]
 
 
@@ -109,7 +122,7 @@ loadComment source anilistId filename =
     task =
       case source of
         None -> Task.succeed []
-        Kari -> Kari.getComments anilistId filename
+        Kari -> API.getComments anilistId filename
 
     fail error = Debug.log error <| SetComments []
     success a = SetComments a

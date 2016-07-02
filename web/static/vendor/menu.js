@@ -7649,6 +7649,358 @@ var _elm_lang$html$Html_App$beginnerProgram = function (_p1) {
 };
 var _elm_lang$html$Html_App$map = _elm_lang$virtual_dom$VirtualDom$map;
 
+var _elm_lang$html$Html_Attributes$attribute = _elm_lang$virtual_dom$VirtualDom$attribute;
+var _elm_lang$html$Html_Attributes$contextmenu = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$attribute, 'contextmenu', value);
+};
+var _elm_lang$html$Html_Attributes$draggable = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$attribute, 'draggable', value);
+};
+var _elm_lang$html$Html_Attributes$list = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$attribute, 'list', value);
+};
+var _elm_lang$html$Html_Attributes$maxlength = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$attribute,
+		'maxlength',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$datetime = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$attribute, 'datetime', value);
+};
+var _elm_lang$html$Html_Attributes$pubdate = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$attribute, 'pubdate', value);
+};
+var _elm_lang$html$Html_Attributes$colspan = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$attribute,
+		'colspan',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$rowspan = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$attribute,
+		'rowspan',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$property = _elm_lang$virtual_dom$VirtualDom$property;
+var _elm_lang$html$Html_Attributes$stringProperty = F2(
+	function (name, string) {
+		return A2(
+			_elm_lang$html$Html_Attributes$property,
+			name,
+			_elm_lang$core$Json_Encode$string(string));
+	});
+var _elm_lang$html$Html_Attributes$class = function (name) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'className', name);
+};
+var _elm_lang$html$Html_Attributes$id = function (name) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'id', name);
+};
+var _elm_lang$html$Html_Attributes$title = function (name) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'title', name);
+};
+var _elm_lang$html$Html_Attributes$accesskey = function ($char) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'accessKey',
+		_elm_lang$core$String$fromChar($char));
+};
+var _elm_lang$html$Html_Attributes$dir = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'dir', value);
+};
+var _elm_lang$html$Html_Attributes$dropzone = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'dropzone', value);
+};
+var _elm_lang$html$Html_Attributes$itemprop = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'itemprop', value);
+};
+var _elm_lang$html$Html_Attributes$lang = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'lang', value);
+};
+var _elm_lang$html$Html_Attributes$tabindex = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'tabIndex',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$charset = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'charset', value);
+};
+var _elm_lang$html$Html_Attributes$content = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'content', value);
+};
+var _elm_lang$html$Html_Attributes$httpEquiv = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'httpEquiv', value);
+};
+var _elm_lang$html$Html_Attributes$language = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'language', value);
+};
+var _elm_lang$html$Html_Attributes$src = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'src', value);
+};
+var _elm_lang$html$Html_Attributes$height = function (value) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'height',
+		_elm_lang$core$Basics$toString(value));
+};
+var _elm_lang$html$Html_Attributes$width = function (value) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'width',
+		_elm_lang$core$Basics$toString(value));
+};
+var _elm_lang$html$Html_Attributes$alt = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'alt', value);
+};
+var _elm_lang$html$Html_Attributes$preload = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'preload', value);
+};
+var _elm_lang$html$Html_Attributes$poster = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'poster', value);
+};
+var _elm_lang$html$Html_Attributes$kind = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'kind', value);
+};
+var _elm_lang$html$Html_Attributes$srclang = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'srclang', value);
+};
+var _elm_lang$html$Html_Attributes$sandbox = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'sandbox', value);
+};
+var _elm_lang$html$Html_Attributes$srcdoc = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'srcdoc', value);
+};
+var _elm_lang$html$Html_Attributes$type$ = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'type', value);
+};
+var _elm_lang$html$Html_Attributes$value = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'value', value);
+};
+var _elm_lang$html$Html_Attributes$defaultValue = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'defaultValue', value);
+};
+var _elm_lang$html$Html_Attributes$placeholder = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'placeholder', value);
+};
+var _elm_lang$html$Html_Attributes$accept = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'accept', value);
+};
+var _elm_lang$html$Html_Attributes$acceptCharset = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'acceptCharset', value);
+};
+var _elm_lang$html$Html_Attributes$action = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'action', value);
+};
+var _elm_lang$html$Html_Attributes$autocomplete = function (bool) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'autocomplete',
+		bool ? 'on' : 'off');
+};
+var _elm_lang$html$Html_Attributes$autosave = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'autosave', value);
+};
+var _elm_lang$html$Html_Attributes$enctype = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'enctype', value);
+};
+var _elm_lang$html$Html_Attributes$formaction = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'formAction', value);
+};
+var _elm_lang$html$Html_Attributes$minlength = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'minLength',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$method = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'method', value);
+};
+var _elm_lang$html$Html_Attributes$name = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'name', value);
+};
+var _elm_lang$html$Html_Attributes$pattern = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'pattern', value);
+};
+var _elm_lang$html$Html_Attributes$size = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'size',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$for = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'htmlFor', value);
+};
+var _elm_lang$html$Html_Attributes$form = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'form', value);
+};
+var _elm_lang$html$Html_Attributes$max = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'max', value);
+};
+var _elm_lang$html$Html_Attributes$min = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'min', value);
+};
+var _elm_lang$html$Html_Attributes$step = function (n) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'step', n);
+};
+var _elm_lang$html$Html_Attributes$cols = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'cols',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$rows = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'rows',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$wrap = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'wrap', value);
+};
+var _elm_lang$html$Html_Attributes$usemap = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'useMap', value);
+};
+var _elm_lang$html$Html_Attributes$shape = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'shape', value);
+};
+var _elm_lang$html$Html_Attributes$coords = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'coords', value);
+};
+var _elm_lang$html$Html_Attributes$challenge = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'challenge', value);
+};
+var _elm_lang$html$Html_Attributes$keytype = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'keytype', value);
+};
+var _elm_lang$html$Html_Attributes$align = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'align', value);
+};
+var _elm_lang$html$Html_Attributes$cite = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'cite', value);
+};
+var _elm_lang$html$Html_Attributes$href = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'href', value);
+};
+var _elm_lang$html$Html_Attributes$target = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'target', value);
+};
+var _elm_lang$html$Html_Attributes$downloadAs = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'download', value);
+};
+var _elm_lang$html$Html_Attributes$hreflang = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'hreflang', value);
+};
+var _elm_lang$html$Html_Attributes$media = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'media', value);
+};
+var _elm_lang$html$Html_Attributes$ping = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'ping', value);
+};
+var _elm_lang$html$Html_Attributes$rel = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'rel', value);
+};
+var _elm_lang$html$Html_Attributes$start = function (n) {
+	return A2(
+		_elm_lang$html$Html_Attributes$stringProperty,
+		'start',
+		_elm_lang$core$Basics$toString(n));
+};
+var _elm_lang$html$Html_Attributes$headers = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'headers', value);
+};
+var _elm_lang$html$Html_Attributes$scope = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'scope', value);
+};
+var _elm_lang$html$Html_Attributes$manifest = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'manifest', value);
+};
+var _elm_lang$html$Html_Attributes$boolProperty = F2(
+	function (name, bool) {
+		return A2(
+			_elm_lang$html$Html_Attributes$property,
+			name,
+			_elm_lang$core$Json_Encode$bool(bool));
+	});
+var _elm_lang$html$Html_Attributes$hidden = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'hidden', bool);
+};
+var _elm_lang$html$Html_Attributes$contenteditable = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'contentEditable', bool);
+};
+var _elm_lang$html$Html_Attributes$spellcheck = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'spellcheck', bool);
+};
+var _elm_lang$html$Html_Attributes$async = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'async', bool);
+};
+var _elm_lang$html$Html_Attributes$defer = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'defer', bool);
+};
+var _elm_lang$html$Html_Attributes$scoped = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'scoped', bool);
+};
+var _elm_lang$html$Html_Attributes$autoplay = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'autoplay', bool);
+};
+var _elm_lang$html$Html_Attributes$controls = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'controls', bool);
+};
+var _elm_lang$html$Html_Attributes$loop = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'loop', bool);
+};
+var _elm_lang$html$Html_Attributes$default = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'default', bool);
+};
+var _elm_lang$html$Html_Attributes$seamless = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'seamless', bool);
+};
+var _elm_lang$html$Html_Attributes$checked = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'checked', bool);
+};
+var _elm_lang$html$Html_Attributes$selected = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'selected', bool);
+};
+var _elm_lang$html$Html_Attributes$autofocus = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'autofocus', bool);
+};
+var _elm_lang$html$Html_Attributes$disabled = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'disabled', bool);
+};
+var _elm_lang$html$Html_Attributes$multiple = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'multiple', bool);
+};
+var _elm_lang$html$Html_Attributes$novalidate = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'noValidate', bool);
+};
+var _elm_lang$html$Html_Attributes$readonly = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'readOnly', bool);
+};
+var _elm_lang$html$Html_Attributes$required = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'required', bool);
+};
+var _elm_lang$html$Html_Attributes$ismap = function (value) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'isMap', value);
+};
+var _elm_lang$html$Html_Attributes$download = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'download', bool);
+};
+var _elm_lang$html$Html_Attributes$reversed = function (bool) {
+	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'reversed', bool);
+};
+var _elm_lang$html$Html_Attributes$classList = function (list) {
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$String$join,
+			' ',
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$core$Basics$fst,
+				A2(_elm_lang$core$List$filter, _elm_lang$core$Basics$snd, list))));
+};
+var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
+
 var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
 var _elm_lang$html$Html_Events$targetChecked = A2(
 	_elm_lang$core$Json_Decode$at,
@@ -8140,8 +8492,9 @@ var _user$project$Comment$decode = A2(
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string));
 var _user$project$Comment$decodeList = _elm_lang$core$Json_Decode$list(_user$project$Comment$decode);
 
-var _user$project$Kari$decodeCommentResponse = A2(_elm_lang$core$Json_Decode_ops[':='], 'comments', _user$project$Comment$decodeList);
-var _user$project$Kari$getErrorMessage = function (error) {
+var _user$project$API$decodeCommentResponse = A2(_elm_lang$core$Json_Decode_ops[':='], 'comment', _user$project$Comment$decode);
+var _user$project$API$decodeCommentsResponse = A2(_elm_lang$core$Json_Decode_ops[':='], 'comments', _user$project$Comment$decodeList);
+var _user$project$API$getErrorMessage = function (error) {
 	var _p0 = error;
 	switch (_p0.ctor) {
 		case 'Timeout':
@@ -8162,7 +8515,8 @@ var _user$project$Kari$getErrorMessage = function (error) {
 					]));
 	}
 };
-var _user$project$Kari$getUrl = F2(
+var _user$project$API$postCommentUrl = '/api/comments/add';
+var _user$project$API$getCommentUrl = F2(
 	function (anilistId, filename) {
 		return A2(
 			_evancz$elm_http$Http$url,
@@ -8178,15 +8532,125 @@ var _user$project$Kari$getUrl = F2(
 					{ctor: '_Tuple2', _0: 'source', _1: 'kari'}
 				]));
 	});
-var _user$project$Kari$getComments = F2(
+var _user$project$API$postComment = F3(
+	function (anilistId, filename, text) {
+		var body = _evancz$elm_http$Http$multipart(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_evancz$elm_http$Http$stringData,
+					'anilist_id',
+					_elm_lang$core$Basics$toString(anilistId)),
+					A2(_evancz$elm_http$Http$stringData, 'filename', filename),
+					A2(_evancz$elm_http$Http$stringData, 'text', text),
+					A2(_evancz$elm_http$Http$stringData, 'source', 'kari')
+				]));
+		return A2(
+			_elm_lang$core$Task$mapError,
+			_user$project$API$getErrorMessage,
+			A3(_evancz$elm_http$Http$post, _user$project$API$decodeCommentResponse, _user$project$API$postCommentUrl, body));
+	});
+var _user$project$API$getComments = F2(
 	function (anilistId, filename) {
 		return A2(
 			_elm_lang$core$Task$mapError,
-			_user$project$Kari$getErrorMessage,
+			_user$project$API$getErrorMessage,
 			A2(
 				_evancz$elm_http$Http$get,
-				_user$project$Kari$decodeCommentResponse,
-				A2(_user$project$Kari$getUrl, anilistId, filename)));
+				_user$project$API$decodeCommentsResponse,
+				A2(_user$project$API$getCommentUrl, anilistId, filename)));
+	});
+
+var _user$project$MenuComposer$Env = F2(
+	function (a, b) {
+		return {anilistId: a, filename: b};
+	});
+var _user$project$MenuComposer$Send = {ctor: 'Send'};
+var _user$project$MenuComposer$SetText = function (a) {
+	return {ctor: 'SetText', _0: a};
+};
+var _user$project$MenuComposer$view = function (_p0) {
+	var _p1 = _p0;
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$value(_p1._0.text),
+						_elm_lang$html$Html_Events$onInput(_user$project$MenuComposer$SetText)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(_user$project$MenuComposer$Send)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Send')
+					]))
+			]));
+};
+var _user$project$MenuComposer$sendComment = F3(
+	function (anilistId, filename, text) {
+		var success = function (_p2) {
+			return _user$project$MenuComposer$SetText('sent');
+		};
+		var fail = function (error) {
+			return _user$project$MenuComposer$SetText(error);
+		};
+		var task = A3(_user$project$API$postComment, anilistId, filename, text);
+		return A3(_elm_lang$core$Task$perform, fail, success, task);
+	});
+var _user$project$MenuComposer$Model = function (a) {
+	return {ctor: 'Model', _0: a};
+};
+var _user$project$MenuComposer$init = function (flags) {
+	return _user$project$MenuComposer$Model(
+		{anilistId: flags.anilistId, filename: flags.filename, text: ''});
+};
+var _user$project$MenuComposer$updateEnv = F2(
+	function (_p3, env) {
+		var _p4 = _p3;
+		return _user$project$MenuComposer$Model(
+			_elm_lang$core$Native_Utils.update(
+				_p4._0,
+				{anilistId: env.anilistId, filename: env.filename}));
+	});
+var _user$project$MenuComposer$update = F2(
+	function (msg, _p5) {
+		var _p6 = _p5;
+		var _p8 = _p6._0;
+		var _p7 = msg;
+		if (_p7.ctor === 'SetText') {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_user$project$MenuComposer$Model(
+					_elm_lang$core$Native_Utils.update(
+						_p8,
+						{text: _p7._0})),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		} else {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_user$project$MenuComposer$Model(
+					_elm_lang$core$Native_Utils.update(
+						_p8,
+						{text: ''})),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A3(_user$project$MenuComposer$sendComment, _p8.anilistId, _p8.filename, _p8.text)
+					]));
+		}
 	});
 
 var _user$project$Menu$selectedText = function (source) {
@@ -8224,6 +8688,9 @@ var _user$project$Menu$Flags = F2(
 	function (a, b) {
 		return {anilistId: a, filename: b};
 	});
+var _user$project$Menu$ComposerMsg = function (a) {
+	return {ctor: 'ComposerMsg', _0: a};
+};
 var _user$project$Menu$SetComments = function (a) {
 	return {ctor: 'SetComments', _0: a};
 };
@@ -8247,7 +8714,7 @@ var _user$project$Menu$loadComment = F3(
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			} else {
-				return A2(_user$project$Kari$getComments, anilistId, filename);
+				return A2(_user$project$API$getComments, anilistId, filename);
 			}
 		}();
 		return A3(_elm_lang$core$Task$perform, fail, success, task);
@@ -8322,7 +8789,11 @@ var _user$project$Menu$view = function (_p4) {
 							',',
 							A2(_elm_lang$core$List$map, _user$project$Comment$text, _p6.comments)))
 					])),
-				_user$project$Menu$switcher
+				_user$project$Menu$switcher,
+				A2(
+				_elm_lang$html$Html_App$map,
+				_user$project$Menu$ComposerMsg,
+				_user$project$MenuComposer$view(_p6.composer))
 			]));
 };
 var _user$project$Menu$Model = function (a) {
@@ -8336,7 +8807,8 @@ var _user$project$Menu$init = function (flags) {
 				source: _user$project$Menu$Kari,
 				comments: _elm_lang$core$Native_List.fromArray(
 					[]),
-				flags: flags
+				flags: flags,
+				composer: _user$project$MenuComposer$init(flags)
 			}),
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
@@ -8344,29 +8816,33 @@ var _user$project$Menu$init = function (flags) {
 var _user$project$Menu$update = F2(
 	function (msg, _p7) {
 		var _p8 = _p7;
-		var _p12 = _p8._0;
+		var _p14 = _p8._0;
 		var _p9 = msg;
 		switch (_p9.ctor) {
 			case 'SetFlags':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_user$project$Menu$Model(
-						_elm_lang$core$Native_Utils.update(
-							_p12,
-							{flags: _p9._0})),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'SwitchSource':
 				var _p10 = _p9._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p12,
-							{source: _p10})),
+							_p14,
+							{
+								flags: _p10,
+								composer: A2(_user$project$MenuComposer$updateEnv, _p14.composer, _p10)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'SwitchSource':
+				var _p11 = _p9._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p14,
+							{source: _p11})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p10, _p12.flags.anilistId, _p12.flags.filename),
+							A3(_user$project$Menu$loadComment, _p11, _p14.flags.anilistId, _p14.flags.filename),
 							A3(
 							_elm_lang$core$Task$perform,
 							_elm_lang$core$Basics$identity,
@@ -8376,17 +8852,31 @@ var _user$project$Menu$update = F2(
 									_elm_lang$core$Native_List.fromArray(
 										[]))))
 						]));
-			default:
-				var _p11 = _p9._0;
+			case 'SetComments':
+				var _p12 = _p9._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p12,
-							{comments: _p11})),
+							_p14,
+							{comments: _p12})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_user$project$Menu$sendComments(_p11)
+							_user$project$Menu$sendComments(_p12)
+						]));
+			default:
+				var _p13 = A2(_user$project$MenuComposer$update, _p9._0, _p14.composer);
+				var composerModel = _p13._0;
+				var cmd = _p13._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p14,
+							{composer: composerModel})),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(_elm_lang$core$Platform_Cmd$map, _user$project$Menu$ComposerMsg, cmd)
 						]));
 		}
 	});
