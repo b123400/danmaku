@@ -7,7 +7,13 @@
 
 <script type="text/javascript" src="/js/vendor.js"></script>
 <script>
-Elm.Menu.fullscreen();
+var menu = Elm.Menu.fullscreen({
+	anilistId: 123,
+	filename: "Baby Step[45].mp4"
+});
+menu.ports.comments.subscribe(function(comments) {
+	console.log(comments);
+});
 </script>
 </body>
 </html>

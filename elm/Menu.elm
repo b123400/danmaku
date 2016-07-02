@@ -1,17 +1,19 @@
-module Menu exposing (..)
+port module Menu exposing (..)
 
 import Html exposing (Html, button, div, text)
 import Html.App as Html
 import Html.Events exposing (onClick)
 import Platform.Sub as Sub
-import Platform.Cmd as Cmd
+import Platform.Cmd as Cmd exposing ((!))
 import Task
 import String
 import Comment as C exposing (Comment)
 import Kari
+import Json.Encode as Json
+import Debug
 
 main =
-  Html.program
+  Html.programWithFlags
     { init = init
     , update = update
     , subscriptions = subscriptions
@@ -27,29 +29,44 @@ type CommentSource = Kari | None
 type Model = Model
   { source : CommentSource
   , comments : List Comment
+  , flags : Flags
   }
 
-init : (Model, Cmd a)
-init =
+type alias Flags =
+  { anilistId : Int
+  , filename : String
+  }
+
+
+init : Flags -> (Model, Cmd a)
+init flags =
   ( Model
       { source = Kari
       , comments = []
+      , flags = flags
       }
   , Cmd.none
   )
 
 subscriptions _ = Sub.none
 
+port comments : Json.Value -> Cmd msg
+sendComments = comments << C.encodeList
+
+
 update msg (Model model) =
   case msg of
     SwitchSource source ->
-      ( Model { model | source = source }
-      , loadComment source
-      )
-    SetComments comments ->
-      ( Model { model | comments = comments }
-      , Cmd.none
-      )
+      Model
+        { model | source = source }
+      ! [ loadComment source model.flags.anilistId model.flags.filename
+        , Task.perform identity identity <| Task.succeed <| SetComments []
+        ]
+
+    SetComments c ->
+      Model { model | comments = c }
+      ! [ sendComments c ]
+
 
 view : Model -> Html Msg
 view (Model model) =
@@ -63,11 +80,13 @@ view (Model model) =
     , switcher
     ]
 
+
 selectedText : CommentSource -> String
 selectedText source =
   case source of
     Kari -> "kari"
     None -> "None"
+
 
 switcher =
   div []
@@ -75,15 +94,16 @@ switcher =
     , button [onClick <| SwitchSource None ] [ text "none" ]
     ]
 
-loadComment : CommentSource -> Cmd Msg
-loadComment source =
+
+loadComment : CommentSource -> Int -> String -> Cmd Msg
+loadComment source anilistId filename =
   let
     task =
       case source of
         None -> Task.succeed []
-        Kari -> Kari.getComments 123 "filename"
+        Kari -> Kari.getComments anilistId filename
 
-    fail _ = SetComments []
+    fail error = Debug.log error <| SetComments []
     success a = SetComments a
 
   in
