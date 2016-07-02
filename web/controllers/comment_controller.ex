@@ -4,6 +4,7 @@ defmodule DanmakuApi.CommentController do
   use DanmakuApi.Web, :controller
 
   alias DanmakuApi.Comment
+  alias DanmakuApi.Episode
 
   def index(conn, params) do
     source = params["source"]
