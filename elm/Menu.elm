@@ -7,6 +7,8 @@ import Platform.Sub as Sub
 import Platform.Cmd as Cmd
 import Task
 import String
+import Comment as C exposing (Comment)
+import Kari
 
 main =
   Html.program
@@ -18,41 +20,46 @@ main =
 
 type Msg
   = SwitchSource CommentSource
-  | SetComments (List String)
+  | SetComments (List Comment)
 
 type CommentSource = Kari | None
 
-type alias Model =
+type Model = Model
   { source : CommentSource
-  , comments : List String
+  , comments : List Comment
   }
 
 init : (Model, Cmd a)
 init =
-  ( { source = Kari
-    , comments = []
-    }
+  ( Model
+      { source = Kari
+      , comments = []
+      }
   , Cmd.none
   )
 
 subscriptions _ = Sub.none
 
-update msg model =
+update msg (Model model) =
   case msg of
     SwitchSource source ->
-      ( { model | source = source }
+      ( Model { model | source = source }
       , loadComment source
       )
     SetComments comments ->
-      ( { model | comments = comments }
+      ( Model { model | comments = comments }
       , Cmd.none
       )
 
 view : Model -> Html Msg
-view model =
+view (Model model) =
   div []
     [ div [] [ model.source |> selectedText |> text ]
-    , div [] [ String.join "," model.comments |> text ]
+    , div [] [ model.comments
+               |> List.map C.text 
+               |> String.join "," 
+               |> text
+             ]
     , switcher
     ]
 
@@ -64,8 +71,8 @@ selectedText source =
 
 switcher =
   div []
-    [ button [onClick (SwitchSource Kari) ] [ text "kari" ]
-    , button [onClick (SwitchSource None) ] [ text "none" ]
+    [ button [onClick <| SwitchSource Kari ] [ text "kari" ]
+    , button [onClick <| SwitchSource None ] [ text "none" ]
     ]
 
 loadComment : CommentSource -> Cmd Msg
@@ -73,8 +80,8 @@ loadComment source =
   let
     task =
       case source of
-        None -> Task.succeed ["1", "a"]
-        Kari -> Task.succeed ["2", "b", "c"]
+        None -> Task.succeed []
+        Kari -> Kari.getComments 123 "filename"
 
     fail _ = SetComments []
     success a = SetComments a

@@ -135,7 +135,7 @@ import VirtualDom
         , ("width", "100%")
         ]
 
-    greeting : Html
+    greeting : Html msg
     greeting =
       div [ myStyle ] [ text "Hello!" ]
 
@@ -287,7 +287,7 @@ dir value =
 {-| Defines whether the element can be dragged. -}
 draggable : String -> Attribute msg
 draggable value =
-  stringProperty "draggable" value
+  attribute "draggable" value
 
 
 {-| Indicates that the element accept the dropping of content on it. -}
@@ -646,7 +646,7 @@ For `input`.
 -}
 list : String -> Attribute msg
 list value =
-  stringProperty "list" value
+  attribute "list" value
 
 
 {-| Defines the minimum number of characters allowed in an `input` or
@@ -662,7 +662,7 @@ minlength n =
 -}
 maxlength : Int -> Attribute msg
 maxlength n =
-  stringProperty "maxLength" (toString n)
+  attribute "maxlength" (toString n)
 
 
 {-| Defines which HTTP method to use when submitting a `form`. Can be GET
@@ -958,7 +958,7 @@ For `del`, `ins`, `time`.
 -}
 datetime : String -> Attribute msg
 datetime value =
-  stringProperty "datetime" value
+  attribute "datetime" value
 
 
 {-| Indicates whether this date and time is the date of the nearest `article`
@@ -966,7 +966,7 @@ ancestor element. For `time`.
 -}
 pubdate : String -> Attribute msg
 pubdate value =
-  stringProperty "pubdate" value
+  attribute "pubdate" value
 
 
 
@@ -998,7 +998,7 @@ For `td` and `th`.
 -}
 colspan : Int -> Attribute msg
 colspan n =
-  stringProperty "colSpan" (toString n)
+  attribute "colspan" (toString n)
 
 
 {-| A space separated list of element IDs indicating which `th` elements are
@@ -1014,7 +1014,7 @@ For `td` and `th`.
 -}
 rowspan : Int -> Attribute msg
 rowspan n =
-  stringProperty "rowSpan" (toString n)
+  attribute "rowspan" (toString n)
 
 
 {-| Specifies the scope of a header cell `th`. Possible values are: col, row,

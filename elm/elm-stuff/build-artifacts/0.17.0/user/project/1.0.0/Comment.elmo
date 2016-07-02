@@ -1,0 +1,15 @@
+var _user$project$Comment$text = function (_p0) {
+	var _p1 = _p0;
+	return _p1._0.text;
+};
+var _user$project$Comment$Comment = function (a) {
+	return {ctor: 'Comment', _0: a};
+};
+var _user$project$Comment$decode = A2(
+	_elm_lang$core$Json_Decode$object1,
+	function (s) {
+		return _user$project$Comment$Comment(
+			{text: s});
+	},
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string));
+var _user$project$Comment$decodeList = _elm_lang$core$Json_Decode$list(_user$project$Comment$decode);
