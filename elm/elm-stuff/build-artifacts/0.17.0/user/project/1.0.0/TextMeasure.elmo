@@ -20,15 +20,16 @@ var _user$project$TextMeasure$makeFontString = function (font) {
 		' ',
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$TextMeasure$family(font),
-				A2(
+				A3(
+				_elm_lang$core$Basics$flip,
 				F2(
 					function (x, y) {
 						return A2(_elm_lang$core$Basics_ops['++'], x, y);
 					}),
 				'px',
 				_elm_lang$core$Basics$toString(
-					_user$project$TextMeasure$fontSize(font)))
+					_user$project$TextMeasure$fontSize(font))),
+				_user$project$TextMeasure$family(font)
 			]));
 };
 var _user$project$TextMeasure$measure = function (font) {

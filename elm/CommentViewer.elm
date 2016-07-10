@@ -101,16 +101,24 @@ view (Model model) =
       CommentLayout.visibleDanmaku delta model.danmaku
 
     commentDiv time tween =
-      div
-        [ style
-          [ ("left", (toString <| CommentLayout.getInitialX tween) ++ "px")
-          , ("top", (toString <| CommentLayout.getY tween) ++ "px")
-          , ("transform", "translateX(" ++ (toString <| CommentLayout.xDeltaAtTime tween time) ++ "px)")
-          , ("position", "absolute")
+      let comment = CommentLayout.getComment tween
+      in
+        div
+          [ style
+            ([("left", (toString <| CommentLayout.getInitialX tween) ++ "px")
+            , ("top", (toString <| CommentLayout.getY tween) ++ "px")
+            , ("transform", "translateX(" ++ (toString <| CommentLayout.xDeltaAtTime tween time) ++ "px)")
+            , ("position", "absolute")
+            , ("width",  (toString <| C.getWidth comment)  ++ "px")
+            , ("height", (toString <| C.getHeight comment) ++ "px")
+            , ("display", "block")
+            , ("background-color", "rgba(0, 1, 0, 0.3)")
+            , ("overflow", "visible")
+            ]
+            ++ (C.styleAttributes comment))
           ]
-        ]
-        [ tween |> CommentLayout.getComment |> C.text |> text
-        ]
+          [ comment |> C.text |> text
+          ]
   in
     div []
       [ div [] <| List.map (commentDiv delta) visibleComments

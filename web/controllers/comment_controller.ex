@@ -62,7 +62,9 @@ defmodule DanmakuApi.CommentController do
     param_episode = params["episode"]
     filename = params["filename"]
     text = params["text"]
-    time = Integer.parse params["time"]
+    {time, _} = Integer.parse params["time"]
+    IO.inspect "Wwwwwwww"
+    IO.inspect time
 
     if filename == nil && param_episode == nil do
       conn

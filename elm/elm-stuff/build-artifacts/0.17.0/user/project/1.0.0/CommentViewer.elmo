@@ -3,51 +3,75 @@ var _user$project$CommentViewer$view = function (_p0) {
 	var _p3 = _p1._0;
 	var commentDiv = F2(
 		function (time, tween) {
+			var comment = _user$project$CommentLayout$getComment(tween);
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$style(
-						_elm_lang$core$Native_List.fromArray(
-							[
-								{
-								ctor: '_Tuple2',
-								_0: 'left',
-								_1: A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(
-										_user$project$CommentLayout$getInitialX(tween)),
-									'px')
-							},
-								{
-								ctor: '_Tuple2',
-								_0: 'top',
-								_1: A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(
-										_user$project$CommentLayout$getY(tween)),
-									'px')
-							},
-								{
-								ctor: '_Tuple2',
-								_0: 'transform',
-								_1: A2(
-									_elm_lang$core$Basics_ops['++'],
-									'translateX(',
-									A2(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Native_List.fromArray(
+								[
+									{
+									ctor: '_Tuple2',
+									_0: 'left',
+									_1: A2(
 										_elm_lang$core$Basics_ops['++'],
 										_elm_lang$core$Basics$toString(
-											A2(_user$project$CommentLayout$xDeltaAtTime, tween, time)),
-										'px)'))
-							},
-								{ctor: '_Tuple2', _0: 'position', _1: 'absolute'}
-							]))
+											_user$project$CommentLayout$getInitialX(tween)),
+										'px')
+								},
+									{
+									ctor: '_Tuple2',
+									_0: 'top',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											_user$project$CommentLayout$getY(tween)),
+										'px')
+								},
+									{
+									ctor: '_Tuple2',
+									_0: 'transform',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										'translateX(',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(
+												A2(_user$project$CommentLayout$xDeltaAtTime, tween, time)),
+											'px)'))
+								},
+									{ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+									{
+									ctor: '_Tuple2',
+									_0: 'width',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											_user$project$Comment$getWidth(comment)),
+										'px')
+								},
+									{
+									ctor: '_Tuple2',
+									_0: 'height',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											_user$project$Comment$getHeight(comment)),
+										'px')
+								},
+									{ctor: '_Tuple2', _0: 'display', _1: 'block'},
+									{ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(0, 1, 0, 0.3)'},
+									{ctor: '_Tuple2', _0: 'overflow', _1: 'visible'}
+								]),
+							_user$project$Comment$styleAttributes(comment)))
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text(
-						_user$project$Comment$text(
-							_user$project$CommentLayout$getComment(tween)))
+						_user$project$Comment$text(comment))
 					]));
 		});
 	var delta = function () {

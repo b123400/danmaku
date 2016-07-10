@@ -15,7 +15,7 @@ defmodule DanmakuApi.Comment do
     timestamps
   end
 
-  @required_fields ~w(source anilist_id episode text metadata)
+  @required_fields ~w(source anilist_id episode text metadata time)
   @optional_fields ~w()
 
   @doc """

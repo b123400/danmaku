@@ -1,4 +1,4 @@
-module TextMeasure exposing (Font, font, measure, measureHeight)
+module TextMeasure exposing (Font, font, family, fontSize, measure, measureHeight)
 
 import String
 import Native.TextMeasure
@@ -18,11 +18,11 @@ nativeMeasure font text =
 makeFontString : Font -> String
 makeFontString font =
   String.join " "
-    [ family font
-    , font
+    [ font
       |> fontSize
       |> toString
-      |> (++) "px"
+      |> flip (++) "px"
+    , family font
     ]
 
 measure : Font -> String -> Float

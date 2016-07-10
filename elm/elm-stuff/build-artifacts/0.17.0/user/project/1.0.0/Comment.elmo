@@ -1,5 +1,25 @@
 var _user$project$Comment$getFont = function (_p0) {
-	return A2(_user$project$TextMeasure$font, 'Arial', 16);
+	return A2(_user$project$TextMeasure$font, 'Arial', 30);
+};
+var _user$project$Comment$styleAttributes = function (comment) {
+	var font = _user$project$Comment$getFont(comment);
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			{
+			ctor: '_Tuple2',
+			_0: 'font-family',
+			_1: _user$project$TextMeasure$family(font)
+		},
+			{
+			ctor: '_Tuple2',
+			_0: 'font-size',
+			_1: A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(
+					_user$project$TextMeasure$fontSize(font)),
+				'px')
+		}
+		]);
 };
 var _user$project$Comment$encode = function (_p1) {
 	var _p2 = _p1;

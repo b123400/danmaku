@@ -8,6 +8,7 @@ module Comment exposing
   , time
   , getWidth
   , getHeight
+  , styleAttributes
   )
 
 import Json.Decode as D exposing ((:=))
@@ -54,7 +55,15 @@ encode (Comment comment) =
     ]
 
 getFont : Comment -> Font
-getFont _ = font "Arial" 16
+getFont _ = font "Arial" 30
+
+styleAttributes : Comment -> List (String, String)
+styleAttributes comment =
+  let font = getFont comment
+  in
+    [ ("font-family", TextMeasure.family font)
+    , ("font-size", (toString <| TextMeasure.fontSize font) ++ "px")
+    ]
 
 getHeight : Comment -> Float
 getHeight c =

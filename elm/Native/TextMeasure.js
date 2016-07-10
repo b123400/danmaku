@@ -9,8 +9,9 @@ var _user$project$Native_TextMeasure = (function() {
 
   function measureText(font, string) {
     var canvas = getCanvas();
-    canvas.font = font;
-    return canvas.getContext('2d')
+    var context = canvas.getContext('2d');
+    context.font = font;
+    return context
       .measureText(string)
       .width;
   }

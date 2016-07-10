@@ -4,6 +4,7 @@ import Maybe exposing (Maybe(..))
 import Lazy exposing (Lazy)
 import Time exposing (Time, inSeconds)
 import List
+import String
 import Debug
 
 import Comment as C exposing (Comment)
@@ -93,7 +94,7 @@ visibleDanmaku : Time -> Danmaku -> Danmaku
 visibleDanmaku time =
   let
     isVisible (CommentTween c) =
-      (startTime c.comment) < time && (endTime c.containerWidth c.comment) > time
+      (startTime c.comment) <= time && (endTime c.containerWidth c.comment) >= time
   in List.filter isVisible
 
 willCollideX : Float -> Comment -> Comment -> Bool
@@ -104,8 +105,8 @@ minimumY : Float -> List YRange -> Float
 minimumY currHeight =
   let
     suggestedY (y, height) curr =
-      if (y >= curr && y <= curr + currHeight) || (y <= curr && y + height >= curr)
+      if (y > curr && y < curr + currHeight) || (y <= curr && y + height >= curr)
       then y + height
       else curr
   in
-    List.foldr suggestedY 0
+    List.foldl suggestedY 0

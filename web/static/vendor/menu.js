@@ -8766,8 +8766,9 @@ var _user$project$Native_TextMeasure = (function() {
 
   function measureText(font, string) {
     var canvas = getCanvas();
-    canvas.font = font;
-    return canvas.getContext('2d')
+    var context = canvas.getContext('2d');
+    context.font = font;
+    return context
       .measureText(string)
       .width;
   }
@@ -8799,15 +8800,16 @@ var _user$project$TextMeasure$makeFontString = function (font) {
 		' ',
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$TextMeasure$family(font),
-				A2(
+				A3(
+				_elm_lang$core$Basics$flip,
 				F2(
 					function (x, y) {
 						return A2(_elm_lang$core$Basics_ops['++'], x, y);
 					}),
 				'px',
 				_elm_lang$core$Basics$toString(
-					_user$project$TextMeasure$fontSize(font)))
+					_user$project$TextMeasure$fontSize(font))),
+				_user$project$TextMeasure$family(font)
 			]));
 };
 var _user$project$TextMeasure$measure = function (font) {
@@ -8821,7 +8823,27 @@ var _user$project$TextMeasure$Font = F2(
 var _user$project$TextMeasure$font = _user$project$TextMeasure$Font;
 
 var _user$project$Comment$getFont = function (_p0) {
-	return A2(_user$project$TextMeasure$font, 'Arial', 16);
+	return A2(_user$project$TextMeasure$font, 'Arial', 30);
+};
+var _user$project$Comment$styleAttributes = function (comment) {
+	var font = _user$project$Comment$getFont(comment);
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			{
+			ctor: '_Tuple2',
+			_0: 'font-family',
+			_1: _user$project$TextMeasure$family(font)
+		},
+			{
+			ctor: '_Tuple2',
+			_0: 'font-size',
+			_1: A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(
+					_user$project$TextMeasure$fontSize(font)),
+				'px')
+		}
+		]);
 };
 var _user$project$Comment$encode = function (_p1) {
 	var _p2 = _p1;
@@ -9017,9 +9039,19 @@ var _user$project$CommentLayout$minimumY = function (currHeight) {
 			var _p1 = _p0;
 			var _p3 = _p1._0;
 			var _p2 = _p1._1;
-			return (((_elm_lang$core$Native_Utils.cmp(_p3, curr) > -1) && (_elm_lang$core$Native_Utils.cmp(_p3, curr + currHeight) < 1)) || ((_elm_lang$core$Native_Utils.cmp(_p3, curr) < 1) && (_elm_lang$core$Native_Utils.cmp(_p3 + _p2, curr) > -1))) ? (_p3 + _p2) : curr;
+			return A2(
+				_elm_lang$core$Debug$log,
+				A2(
+					_elm_lang$core$String$join,
+					',',
+					A2(
+						_elm_lang$core$List$map,
+						_elm_lang$core$Basics$toString,
+						_elm_lang$core$Native_List.fromArray(
+							[_p3, _p2, curr, currHeight]))),
+				(((_elm_lang$core$Native_Utils.cmp(_p3, curr) > 0) && (_elm_lang$core$Native_Utils.cmp(_p3, curr + currHeight) < 0)) || ((_elm_lang$core$Native_Utils.cmp(_p3, curr) < 1) && (_elm_lang$core$Native_Utils.cmp(_p3 + _p2, curr) > -1))) ? (_p3 + _p2) : curr);
 		});
-	return A2(_elm_lang$core$List$foldr, suggestedY, 0);
+	return A2(_elm_lang$core$List$foldl, suggestedY, 0);
 };
 var _user$project$CommentLayout$speed = F2(
 	function (containerWidth, c) {
@@ -9061,9 +9093,9 @@ var _user$project$CommentLayout$visibleDanmaku = function (time) {
 		var _p9 = _p8._0;
 		return (_elm_lang$core$Native_Utils.cmp(
 			_user$project$CommentLayout$startTime(_p9.comment),
-			time) < 0) && (_elm_lang$core$Native_Utils.cmp(
+			time) < 1) && (_elm_lang$core$Native_Utils.cmp(
 			A2(_user$project$CommentLayout$endTime, _p9.containerWidth, _p9.comment),
-			time) > 0);
+			time) > -1);
 	};
 	return _elm_lang$core$List$filter(isVisible);
 };
@@ -9101,24 +9133,36 @@ var _user$project$CommentLayout$appendComment = F3(
 				_user$project$Comment$getHeight(comment)),
 			A2(
 				_elm_lang$lazy$Lazy$map,
-				_elm_lang$core$List$sortBy(_elm_lang$core$Basics$fst),
-				_user$project$LazyUtil$collect(
-					A2(
-						_elm_lang$core$List$map,
-						_user$project$CommentLayout$getLazyYRange,
+				_elm_lang$core$Debug$log('4444'),
+				A2(
+					_elm_lang$lazy$Lazy$map,
+					_elm_lang$core$List$sortBy(_elm_lang$core$Basics$fst),
+					_user$project$LazyUtil$collect(
 						A2(
-							_elm_lang$core$List$filter,
-							function (_p19) {
-								return A3(
-									_user$project$CommentLayout$willCollideX,
-									containerWidth,
-									comment,
-									_user$project$CommentLayout$getComment(_p19));
-							},
+							_elm_lang$core$Debug$log,
+							'3333',
 							A2(
-								_user$project$CommentLayout$visibleDanmaku,
-								_user$project$Comment$time(comment),
-								danmaku))))));
+								_elm_lang$core$List$map,
+								_user$project$CommentLayout$getLazyYRange,
+								A2(
+									_elm_lang$core$Debug$log,
+									'2222',
+									A2(
+										_elm_lang$core$List$filter,
+										function (_p19) {
+											return A3(
+												_user$project$CommentLayout$willCollideX,
+												containerWidth,
+												comment,
+												_user$project$CommentLayout$getComment(_p19));
+										},
+										A2(
+											_elm_lang$core$Debug$log,
+											'1111',
+											A2(
+												_user$project$CommentLayout$visibleDanmaku,
+												_user$project$Comment$time(comment),
+												danmaku))))))))));
 		var tween = _user$project$CommentLayout$CommentTween(
 			{comment: comment, y: lazyY, initialX: containerWidth, containerWidth: containerWidth});
 		return A2(
@@ -9246,51 +9290,75 @@ var _user$project$CommentViewer$view = function (_p0) {
 	var _p3 = _p1._0;
 	var commentDiv = F2(
 		function (time, tween) {
+			var comment = _user$project$CommentLayout$getComment(tween);
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$style(
-						_elm_lang$core$Native_List.fromArray(
-							[
-								{
-								ctor: '_Tuple2',
-								_0: 'left',
-								_1: A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(
-										_user$project$CommentLayout$getInitialX(tween)),
-									'px')
-							},
-								{
-								ctor: '_Tuple2',
-								_0: 'top',
-								_1: A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(
-										_user$project$CommentLayout$getY(tween)),
-									'px')
-							},
-								{
-								ctor: '_Tuple2',
-								_0: 'transform',
-								_1: A2(
-									_elm_lang$core$Basics_ops['++'],
-									'translateX(',
-									A2(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Native_List.fromArray(
+								[
+									{
+									ctor: '_Tuple2',
+									_0: 'left',
+									_1: A2(
 										_elm_lang$core$Basics_ops['++'],
 										_elm_lang$core$Basics$toString(
-											A2(_user$project$CommentLayout$xDeltaAtTime, tween, time)),
-										'px)'))
-							},
-								{ctor: '_Tuple2', _0: 'position', _1: 'absolute'}
-							]))
+											_user$project$CommentLayout$getInitialX(tween)),
+										'px')
+								},
+									{
+									ctor: '_Tuple2',
+									_0: 'top',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											_user$project$CommentLayout$getY(tween)),
+										'px')
+								},
+									{
+									ctor: '_Tuple2',
+									_0: 'transform',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										'translateX(',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(
+												A2(_user$project$CommentLayout$xDeltaAtTime, tween, time)),
+											'px)'))
+								},
+									{ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+									{
+									ctor: '_Tuple2',
+									_0: 'width',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											_user$project$Comment$getWidth(comment)),
+										'px')
+								},
+									{
+									ctor: '_Tuple2',
+									_0: 'height',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											_user$project$Comment$getHeight(comment)),
+										'px')
+								},
+									{ctor: '_Tuple2', _0: 'display', _1: 'block'},
+									{ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(0, 1, 0, 0.3)'},
+									{ctor: '_Tuple2', _0: 'overflow', _1: 'visible'}
+								]),
+							_user$project$Comment$styleAttributes(comment)))
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text(
-						_user$project$Comment$text(
-							_user$project$CommentLayout$getComment(tween)))
+						_user$project$Comment$text(comment))
 					]));
 		});
 	var delta = function () {
