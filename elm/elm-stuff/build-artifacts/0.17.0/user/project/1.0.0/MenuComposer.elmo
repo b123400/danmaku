@@ -2,12 +2,14 @@ var _user$project$MenuComposer$Env = F2(
 	function (a, b) {
 		return {anilistId: a, filename: b};
 	});
+var _user$project$MenuComposer$Sent = {ctor: 'Sent'};
 var _user$project$MenuComposer$Send = {ctor: 'Send'};
 var _user$project$MenuComposer$SetText = function (a) {
 	return {ctor: 'SetText', _0: a};
 };
 var _user$project$MenuComposer$view = function (_p0) {
 	var _p1 = _p0;
+	var _p2 = _p1._0;
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -19,8 +21,9 @@ var _user$project$MenuComposer$view = function (_p0) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$type$('text'),
-						_elm_lang$html$Html_Attributes$value(_p1._0.text),
-						_elm_lang$html$Html_Events$onInput(_user$project$MenuComposer$SetText)
+						_elm_lang$html$Html_Attributes$value(_p2.text),
+						_elm_lang$html$Html_Events$onInput(_user$project$MenuComposer$SetText),
+						_elm_lang$html$Html_Attributes$disabled(_p2.isLoading)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
@@ -28,7 +31,8 @@ var _user$project$MenuComposer$view = function (_p0) {
 				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Events$onClick(_user$project$MenuComposer$Send)
+						_elm_lang$html$Html_Events$onClick(_user$project$MenuComposer$Send),
+						_elm_lang$html$Html_Attributes$disabled(_p2.isLoading)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -38,13 +42,13 @@ var _user$project$MenuComposer$view = function (_p0) {
 };
 var _user$project$MenuComposer$sendComment = F3(
 	function (anilistId, filename, text) {
-		var success = function (_p2) {
-			return _user$project$MenuComposer$SetText('sent');
+		var success = function (_p3) {
+			return _user$project$MenuComposer$Sent;
 		};
 		var fail = function (error) {
 			return _user$project$MenuComposer$SetText(error);
 		};
-		var task = A3(_user$project$API$postComment, anilistId, filename, text);
+		var task = A4(_user$project$API$postComment, anilistId, filename, 1000, text);
 		return A3(_elm_lang$core$Task$perform, fail, success, task);
 	});
 var _user$project$MenuComposer$Model = function (a) {
@@ -52,40 +56,50 @@ var _user$project$MenuComposer$Model = function (a) {
 };
 var _user$project$MenuComposer$init = function (flags) {
 	return _user$project$MenuComposer$Model(
-		{anilistId: flags.anilistId, filename: flags.filename, text: ''});
+		{anilistId: flags.anilistId, filename: flags.filename, text: '', isLoading: false});
 };
 var _user$project$MenuComposer$updateEnv = F2(
-	function (_p3, env) {
-		var _p4 = _p3;
+	function (_p4, env) {
+		var _p5 = _p4;
 		return _user$project$MenuComposer$Model(
 			_elm_lang$core$Native_Utils.update(
-				_p4._0,
+				_p5._0,
 				{anilistId: env.anilistId, filename: env.filename}));
 	});
 var _user$project$MenuComposer$update = F2(
-	function (msg, _p5) {
-		var _p6 = _p5;
-		var _p8 = _p6._0;
-		var _p7 = msg;
-		if (_p7.ctor === 'SetText') {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$MenuComposer$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p8,
-						{text: _p7._0})),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
-		} else {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$MenuComposer$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p8,
-						{text: ''})),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A3(_user$project$MenuComposer$sendComment, _p8.anilistId, _p8.filename, _p8.text)
-					]));
+	function (msg, _p6) {
+		var _p7 = _p6;
+		var _p9 = _p7._0;
+		var _p8 = msg;
+		switch (_p8.ctor) {
+			case 'SetText':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$MenuComposer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p9,
+							{text: _p8._0})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'Send':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$MenuComposer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p9,
+							{text: '', isLoading: true})),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A3(_user$project$MenuComposer$sendComment, _p9.anilistId, _p9.filename, _p9.text)
+						]));
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$MenuComposer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p9,
+							{isLoading: false})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 		}
 	});

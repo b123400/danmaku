@@ -1,0 +1,166 @@
+var _user$project$CommentLayout$minimumY = function (currHeight) {
+	var suggestedY = F2(
+		function (_p0, curr) {
+			var _p1 = _p0;
+			var _p3 = _p1._0;
+			var _p2 = _p1._1;
+			return A2(
+				_elm_lang$core$Debug$log,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'suggestedY ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(_p3),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'/',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(_p2),
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'/',
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(curr),
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'/',
+											_elm_lang$core$Basics$toString(currHeight)))))))),
+				(((_elm_lang$core$Native_Utils.cmp(_p3, curr) > -1) && (_elm_lang$core$Native_Utils.cmp(_p3, curr + currHeight) < 1)) || ((_elm_lang$core$Native_Utils.cmp(_p3, curr) < 1) && (_elm_lang$core$Native_Utils.cmp(_p3 + _p2, curr) > -1))) ? (_p3 + _p2) : curr);
+		});
+	return A2(_elm_lang$core$List$foldr, suggestedY, 0);
+};
+var _user$project$CommentLayout$speed = -100 / _elm_lang$core$Time$second;
+var _user$project$CommentLayout$offsetAtTimeDelta = function (timeDelta) {
+	return _user$project$CommentLayout$speed * _elm_lang$core$Time$inSeconds(timeDelta);
+};
+var _user$project$CommentLayout$duration = F2(
+	function (containerWidth, c) {
+		var width = _user$project$TextMeasure$measureComment(c);
+		return A2(
+			_elm_lang$core$Debug$log,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'duration',
+				_user$project$Comment$text(c)),
+			(width + containerWidth) / _elm_lang$core$Basics$abs(_user$project$CommentLayout$speed));
+	});
+var _user$project$CommentLayout$startTime = function (c) {
+	return A2(
+		_elm_lang$core$Debug$log,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'start time',
+			_user$project$Comment$text(c)),
+		_user$project$Comment$time(c));
+};
+var _user$project$CommentLayout$endTime = F2(
+	function (containerWidth, c) {
+		return A2(
+			_elm_lang$core$Debug$log,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'end time',
+				_user$project$Comment$text(c)),
+			_user$project$CommentLayout$startTime(c) + A2(_user$project$CommentLayout$duration, containerWidth, c));
+	});
+var _user$project$CommentLayout$touchEdgeTime = F2(
+	function (containerWidth, c) {
+		return A2(
+			_elm_lang$core$Debug$log,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'touch edge',
+				_user$project$Comment$text(c)),
+			_user$project$CommentLayout$startTime(c) + (containerWidth / _elm_lang$core$Basics$abs(_user$project$CommentLayout$speed)));
+	});
+var _user$project$CommentLayout$willCollideX = F3(
+	function (containerWidth, curr, prev) {
+		return _elm_lang$core$Native_Utils.cmp(
+			A2(_user$project$CommentLayout$endTime, containerWidth, prev),
+			A2(_user$project$CommentLayout$touchEdgeTime, containerWidth, curr)) > 0;
+	});
+var _user$project$CommentLayout$getLazyYRange = function (_p4) {
+	var _p5 = _p4;
+	var _p6 = _p5._0;
+	var height = _user$project$TextMeasure$getCommentHeight(_p6.comment);
+	return A2(
+		_elm_lang$lazy$Lazy$map,
+		function (y) {
+			return {ctor: '_Tuple2', _0: y, _1: height};
+		},
+		_p6.y);
+};
+var _user$project$CommentLayout$getY = function (_p7) {
+	var _p8 = _p7;
+	return _elm_lang$lazy$Lazy$force(_p8._0.y);
+};
+var _user$project$CommentLayout$getComment = function (_p9) {
+	var _p10 = _p9;
+	return _p10._0.comment;
+};
+var _user$project$CommentLayout$visibleDanmaku = F2(
+	function (containerWidth, time) {
+		var isVisible = function (c) {
+			var comment = _user$project$CommentLayout$getComment(c);
+			return (_elm_lang$core$Native_Utils.cmp(
+				_user$project$CommentLayout$startTime(comment),
+				time) < 0) && (_elm_lang$core$Native_Utils.cmp(
+				A2(_user$project$CommentLayout$endTime, containerWidth, comment),
+				time) > 0);
+		};
+		return _elm_lang$core$List$filter(isVisible);
+	});
+var _user$project$CommentLayout$CommentTween = function (a) {
+	return {ctor: 'CommentTween', _0: a};
+};
+var _user$project$CommentLayout$appendComment = F3(
+	function (containerWidth, comment, danmaku) {
+		var lazyY = A2(
+			_elm_lang$lazy$Lazy$map,
+			_user$project$CommentLayout$minimumY(
+				_user$project$TextMeasure$getCommentHeight(comment)),
+			A2(
+				_elm_lang$lazy$Lazy$map,
+				_elm_lang$core$List$sortBy(_elm_lang$core$Basics$fst),
+				_user$project$LazyUtil$collect(
+					A2(
+						_elm_lang$core$List$map,
+						_user$project$CommentLayout$getLazyYRange,
+						A2(
+							_elm_lang$core$Debug$log,
+							'2222',
+							A2(
+								_elm_lang$core$List$filter,
+								function (_p11) {
+									return A3(
+										_user$project$CommentLayout$willCollideX,
+										containerWidth,
+										comment,
+										_user$project$CommentLayout$getComment(_p11));
+								},
+								A2(
+									_elm_lang$core$Debug$log,
+									'1111',
+									A3(
+										_user$project$CommentLayout$visibleDanmaku,
+										containerWidth,
+										_user$project$Comment$time(comment),
+										danmaku))))))));
+		var tween = _user$project$CommentLayout$CommentTween(
+			{comment: comment, y: lazyY});
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(_elm_lang$core$Debug$log, 'danmaku out', danmaku),
+			_elm_lang$core$Native_List.fromArray(
+				[tween]));
+	});
+var _user$project$CommentLayout$danmaku = function (containerWidth) {
+	return A2(
+		_elm_lang$core$List$foldl,
+		_user$project$CommentLayout$appendComment(containerWidth),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};

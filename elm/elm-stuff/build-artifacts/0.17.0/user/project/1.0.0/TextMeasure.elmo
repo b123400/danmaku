@@ -1,0 +1,51 @@
+var _user$project$TextMeasure$nativeMeasure = F2(
+	function (font, text) {
+		return A2(_user$project$Native_TextMeasure.measureText, font, text);
+	});
+var _user$project$TextMeasure$fontSize = function (_p0) {
+	var _p1 = _p0;
+	return _p1._1;
+};
+var _user$project$TextMeasure$family = function (_p2) {
+	var _p3 = _p2;
+	return _p3._0;
+};
+var _user$project$TextMeasure$makeFontString = function (font) {
+	return A2(
+		_elm_lang$core$String$join,
+		' ',
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$TextMeasure$family(font),
+				A2(
+				F2(
+					function (x, y) {
+						return A2(_elm_lang$core$Basics_ops['++'], x, y);
+					}),
+				'px',
+				_elm_lang$core$Basics$toString(
+					_user$project$TextMeasure$fontSize(font)))
+			]));
+};
+var _user$project$TextMeasure$measure = function (font) {
+	return _user$project$TextMeasure$nativeMeasure(
+		_user$project$TextMeasure$makeFontString(font));
+};
+var _user$project$TextMeasure$Font = F2(
+	function (a, b) {
+		return {ctor: 'Font', _0: a, _1: b};
+	});
+var _user$project$TextMeasure$font = _user$project$TextMeasure$Font;
+var _user$project$TextMeasure$getCommentFont = function (_p4) {
+	return A2(_user$project$TextMeasure$Font, 'Arial', 16);
+};
+var _user$project$TextMeasure$getCommentHeight = function (c) {
+	return _user$project$TextMeasure$fontSize(
+		_user$project$TextMeasure$getCommentFont(c));
+};
+var _user$project$TextMeasure$measureComment = function (c) {
+	return A2(
+		_user$project$TextMeasure$measure,
+		_user$project$TextMeasure$getCommentFont(c),
+		_user$project$Comment$text(c));
+};

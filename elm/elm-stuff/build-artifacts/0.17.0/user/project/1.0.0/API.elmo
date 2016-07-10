@@ -38,8 +38,8 @@ var _user$project$API$getCommentUrl = F2(
 					{ctor: '_Tuple2', _0: 'source', _1: 'kari'}
 				]));
 	});
-var _user$project$API$postComment = F3(
-	function (anilistId, filename, text) {
+var _user$project$API$postComment = F4(
+	function (anilistId, filename, time, text) {
 		var body = _evancz$elm_http$Http$multipart(
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -49,6 +49,10 @@ var _user$project$API$postComment = F3(
 					_elm_lang$core$Basics$toString(anilistId)),
 					A2(_evancz$elm_http$Http$stringData, 'filename', filename),
 					A2(_evancz$elm_http$Http$stringData, 'text', text),
+					A2(
+					_evancz$elm_http$Http$stringData,
+					'time',
+					_elm_lang$core$Basics$toString(time)),
 					A2(_evancz$elm_http$Http$stringData, 'source', 'kari')
 				]));
 		return A2(

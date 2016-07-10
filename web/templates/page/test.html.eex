@@ -6,14 +6,24 @@
 </head>
 <body>
 
+<div class="danmaku-menu">
+</div>
+
+<div class="danmaku-comments">
+</div>
+
 <script type="text/javascript" src="/js/vendor.js"></script>
 <script>
-var menu = Elm.Menu.fullscreen({
+var commentViewerDom = document.getElementsByClassName('danmaku-comments')[0];
+var commentViewer = Elm.CommentViewer.embed(commentViewerDom);
+
+var menuDom = document.getElementsByClassName('danmaku-menu')[0];
+var menu = Elm.Menu.embed(menuDom, {
 	anilistId: 123,
 	filename: "Baby Step[45].mp4"
 });
 menu.ports.comments.subscribe(function(comments) {
-	console.log(comments);
+	commentViewer.ports.slidingComments.send(comments);
 });
 </script>
 </body>

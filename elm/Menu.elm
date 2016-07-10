@@ -84,8 +84,17 @@ update msg (Model model) =
       ! [ sendComments c ]
 
     ComposerMsg msg ->
-      let (composerModel, cmd) = MC.update msg model.composer
-      in Model { model | composer = composerModel } ! [Cmd.map ComposerMsg cmd]
+      let
+        (composerModel, cmd) = MC.update msg model.composer
+        reloadCmd =
+          case msg of
+            MC.Sent   -> loadComment model.source model.flags.anilistId model.flags.filename
+            otherwise -> Cmd.none
+      in
+        Model { model | composer = composerModel }
+        ! [ Cmd.map ComposerMsg cmd
+          , reloadCmd
+          ]
 
 view : Model -> Html Msg
 view (Model model) =

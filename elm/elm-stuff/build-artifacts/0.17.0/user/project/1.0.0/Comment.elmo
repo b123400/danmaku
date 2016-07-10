@@ -1,31 +1,51 @@
 var _user$project$Comment$encode = function (_p0) {
 	var _p1 = _p0;
+	var _p2 = _p1._0;
 	return _elm_lang$core$Json_Encode$object(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{
 				ctor: '_Tuple2',
 				_0: 'text',
-				_1: _elm_lang$core$Json_Encode$string(_p1._0.text)
+				_1: _elm_lang$core$Json_Encode$string(_p2.text)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'time',
+				_1: _elm_lang$core$Json_Encode$float(
+					_elm_lang$core$Time$inMilliseconds(_p2.time))
 			}
 			]));
 };
-var _user$project$Comment$encodeList = function (_p2) {
+var _user$project$Comment$encodeList = function (_p3) {
 	return _elm_lang$core$Json_Encode$list(
-		A2(_elm_lang$core$List$map, _user$project$Comment$encode, _p2));
+		A2(_elm_lang$core$List$map, _user$project$Comment$encode, _p3));
 };
-var _user$project$Comment$text = function (_p3) {
-	var _p4 = _p3;
-	return _p4._0.text;
+var _user$project$Comment$timeDecoder = A2(
+	_elm_lang$core$Json_Decode$map,
+	F2(
+		function (x, y) {
+			return x * y;
+		})(_elm_lang$core$Time$millisecond),
+	_elm_lang$core$Json_Decode$float);
+var _user$project$Comment$time = function (_p4) {
+	var _p5 = _p4;
+	return _p5._0.time;
+};
+var _user$project$Comment$text = function (_p6) {
+	var _p7 = _p6;
+	return _p7._0.text;
 };
 var _user$project$Comment$Comment = function (a) {
 	return {ctor: 'Comment', _0: a};
 };
-var _user$project$Comment$decode = A2(
-	_elm_lang$core$Json_Decode$object1,
-	function (s) {
-		return _user$project$Comment$Comment(
-			{text: s});
-	},
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string));
+var _user$project$Comment$decode = A3(
+	_elm_lang$core$Json_Decode$object2,
+	F2(
+		function (s, t) {
+			return _user$project$Comment$Comment(
+				{text: s, time: t});
+		}),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'time', _user$project$Comment$timeDecoder));
 var _user$project$Comment$decodeList = _elm_lang$core$Json_Decode$list(_user$project$Comment$decode);

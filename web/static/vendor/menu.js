@@ -8102,6 +8102,120 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _elm_lang$lazy$Native_Lazy = function() {
+
+function memoize(thunk)
+{
+    var value;
+    var isForced = false;
+    return function(tuple0) {
+        if (!isForced) {
+            value = thunk(tuple0);
+            isForced = true;
+        }
+        return value;
+    };
+}
+
+return {
+    memoize: memoize
+};
+
+}();
+
+var _elm_lang$lazy$Lazy$force = function (_p0) {
+	var _p1 = _p0;
+	return _p1._0(
+		{ctor: '_Tuple0'});
+};
+var _elm_lang$lazy$Lazy$Lazy = function (a) {
+	return {ctor: 'Lazy', _0: a};
+};
+var _elm_lang$lazy$Lazy$lazy = function (thunk) {
+	return _elm_lang$lazy$Lazy$Lazy(
+		_elm_lang$lazy$Native_Lazy.memoize(thunk));
+};
+var _elm_lang$lazy$Lazy$map = F2(
+	function (f, a) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p2) {
+				var _p3 = _p2;
+				return f(
+					_elm_lang$lazy$Lazy$force(a));
+			});
+	});
+var _elm_lang$lazy$Lazy$map2 = F3(
+	function (f, a, b) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p4) {
+				var _p5 = _p4;
+				return A2(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b));
+			});
+	});
+var _elm_lang$lazy$Lazy$map3 = F4(
+	function (f, a, b, c) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p6) {
+				var _p7 = _p6;
+				return A3(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c));
+			});
+	});
+var _elm_lang$lazy$Lazy$map4 = F5(
+	function (f, a, b, c, d) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p8) {
+				var _p9 = _p8;
+				return A4(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c),
+					_elm_lang$lazy$Lazy$force(d));
+			});
+	});
+var _elm_lang$lazy$Lazy$map5 = F6(
+	function (f, a, b, c, d, e) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p10) {
+				var _p11 = _p10;
+				return A5(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c),
+					_elm_lang$lazy$Lazy$force(d),
+					_elm_lang$lazy$Lazy$force(e));
+			});
+	});
+var _elm_lang$lazy$Lazy$apply = F2(
+	function (f, x) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p12) {
+				var _p13 = _p12;
+				return A2(
+					_elm_lang$lazy$Lazy$force,
+					f,
+					_elm_lang$lazy$Lazy$force(x));
+			});
+	});
+var _elm_lang$lazy$Lazy$andThen = F2(
+	function (a, callback) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p14) {
+				var _p15 = _p14;
+				return _elm_lang$lazy$Lazy$force(
+					callback(
+						_elm_lang$lazy$Lazy$force(a)));
+			});
+	});
+
 //import Dict, List, Maybe, Native.Scheduler //
 
 var _evancz$elm_http$Native_Http = function() {
@@ -8462,34 +8576,54 @@ var _evancz$elm_http$Http$post = F3(
 
 var _user$project$Comment$encode = function (_p0) {
 	var _p1 = _p0;
+	var _p2 = _p1._0;
 	return _elm_lang$core$Json_Encode$object(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{
 				ctor: '_Tuple2',
 				_0: 'text',
-				_1: _elm_lang$core$Json_Encode$string(_p1._0.text)
+				_1: _elm_lang$core$Json_Encode$string(_p2.text)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'time',
+				_1: _elm_lang$core$Json_Encode$float(
+					_elm_lang$core$Time$inMilliseconds(_p2.time))
 			}
 			]));
 };
-var _user$project$Comment$encodeList = function (_p2) {
+var _user$project$Comment$encodeList = function (_p3) {
 	return _elm_lang$core$Json_Encode$list(
-		A2(_elm_lang$core$List$map, _user$project$Comment$encode, _p2));
+		A2(_elm_lang$core$List$map, _user$project$Comment$encode, _p3));
 };
-var _user$project$Comment$text = function (_p3) {
-	var _p4 = _p3;
-	return _p4._0.text;
+var _user$project$Comment$timeDecoder = A2(
+	_elm_lang$core$Json_Decode$map,
+	F2(
+		function (x, y) {
+			return x * y;
+		})(_elm_lang$core$Time$millisecond),
+	_elm_lang$core$Json_Decode$float);
+var _user$project$Comment$time = function (_p4) {
+	var _p5 = _p4;
+	return _p5._0.time;
+};
+var _user$project$Comment$text = function (_p6) {
+	var _p7 = _p6;
+	return _p7._0.text;
 };
 var _user$project$Comment$Comment = function (a) {
 	return {ctor: 'Comment', _0: a};
 };
-var _user$project$Comment$decode = A2(
-	_elm_lang$core$Json_Decode$object1,
-	function (s) {
-		return _user$project$Comment$Comment(
-			{text: s});
-	},
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string));
+var _user$project$Comment$decode = A3(
+	_elm_lang$core$Json_Decode$object2,
+	F2(
+		function (s, t) {
+			return _user$project$Comment$Comment(
+				{text: s, time: t});
+		}),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'time', _user$project$Comment$timeDecoder));
 var _user$project$Comment$decodeList = _elm_lang$core$Json_Decode$list(_user$project$Comment$decode);
 
 var _user$project$API$decodeCommentResponse = A2(_elm_lang$core$Json_Decode_ops[':='], 'comment', _user$project$Comment$decode);
@@ -8532,8 +8666,8 @@ var _user$project$API$getCommentUrl = F2(
 					{ctor: '_Tuple2', _0: 'source', _1: 'kari'}
 				]));
 	});
-var _user$project$API$postComment = F3(
-	function (anilistId, filename, text) {
+var _user$project$API$postComment = F4(
+	function (anilistId, filename, time, text) {
 		var body = _evancz$elm_http$Http$multipart(
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -8543,6 +8677,10 @@ var _user$project$API$postComment = F3(
 					_elm_lang$core$Basics$toString(anilistId)),
 					A2(_evancz$elm_http$Http$stringData, 'filename', filename),
 					A2(_evancz$elm_http$Http$stringData, 'text', text),
+					A2(
+					_evancz$elm_http$Http$stringData,
+					'time',
+					_elm_lang$core$Basics$toString(time)),
 					A2(_evancz$elm_http$Http$stringData, 'source', 'kari')
 				]));
 		return A2(
@@ -8561,16 +8699,310 @@ var _user$project$API$getComments = F2(
 				A2(_user$project$API$getCommentUrl, anilistId, filename)));
 	});
 
+var _user$project$Native_TextMeasure = (function() {
+
+  var canvas = null;
+
+  function getCanvas() {
+    if (!canvas) canvas = document.createElement('canvas');
+    return canvas;
+  }
+
+  function measureText(font, string) {
+    var canvas = getCanvas();
+    canvas.font = font;
+    return canvas.getContext('2d')
+      .measureText(string)
+      .width;
+  }
+
+  return {
+    measureText: F2(measureText)
+  };
+})();
+
+var _user$project$TextMeasure$nativeMeasure = F2(
+	function (font, text) {
+		return A2(_user$project$Native_TextMeasure.measureText, font, text);
+	});
+var _user$project$TextMeasure$fontSize = function (_p0) {
+	var _p1 = _p0;
+	return _p1._1;
+};
+var _user$project$TextMeasure$family = function (_p2) {
+	var _p3 = _p2;
+	return _p3._0;
+};
+var _user$project$TextMeasure$makeFontString = function (font) {
+	return A2(
+		_elm_lang$core$String$join,
+		' ',
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$TextMeasure$family(font),
+				A2(
+				F2(
+					function (x, y) {
+						return A2(_elm_lang$core$Basics_ops['++'], x, y);
+					}),
+				'px',
+				_elm_lang$core$Basics$toString(
+					_user$project$TextMeasure$fontSize(font)))
+			]));
+};
+var _user$project$TextMeasure$measure = function (font) {
+	return _user$project$TextMeasure$nativeMeasure(
+		_user$project$TextMeasure$makeFontString(font));
+};
+var _user$project$TextMeasure$Font = F2(
+	function (a, b) {
+		return {ctor: 'Font', _0: a, _1: b};
+	});
+var _user$project$TextMeasure$font = _user$project$TextMeasure$Font;
+var _user$project$TextMeasure$getCommentFont = function (_p4) {
+	return A2(_user$project$TextMeasure$Font, 'Arial', 16);
+};
+var _user$project$TextMeasure$getCommentHeight = function (c) {
+	return _user$project$TextMeasure$fontSize(
+		_user$project$TextMeasure$getCommentFont(c));
+};
+var _user$project$TextMeasure$measureComment = function (c) {
+	return A2(
+		_user$project$TextMeasure$measure,
+		_user$project$TextMeasure$getCommentFont(c),
+		_user$project$Comment$text(c));
+};
+
+var _user$project$LazyUtil$foldr = function (reduce) {
+	var reduce$ = F2(
+		function (lazyA, lazyB) {
+			return A2(
+				_elm_lang$lazy$Lazy$andThen,
+				lazyA,
+				function (a) {
+					return A2(
+						_elm_lang$lazy$Lazy$andThen,
+						lazyB,
+						function (b) {
+							return A2(reduce, a, b);
+						});
+				});
+		});
+	return _elm_lang$core$List$foldl(reduce$);
+};
+var _user$project$LazyUtil$foldl = function (reduce) {
+	var reduce$ = F2(
+		function (lazyA, lazyB) {
+			return A2(
+				_elm_lang$lazy$Lazy$andThen,
+				lazyA,
+				function (a) {
+					return A2(
+						_elm_lang$lazy$Lazy$andThen,
+						lazyB,
+						function (b) {
+							return A2(reduce, a, b);
+						});
+				});
+		});
+	return _elm_lang$core$List$foldl(reduce$);
+};
+var _user$project$LazyUtil$collect = function (lazies) {
+	var reduce$ = F2(
+		function (a, b) {
+			return _elm_lang$lazy$Lazy$lazy(
+				_elm_lang$core$Basics$always(
+					A2(_elm_lang$core$List_ops['::'], a, b)));
+		});
+	return A3(
+		_user$project$LazyUtil$foldl,
+		reduce$,
+		_elm_lang$lazy$Lazy$lazy(
+			_elm_lang$core$Basics$always(
+				_elm_lang$core$Native_List.fromArray(
+					[]))),
+		lazies);
+};
+
+var _user$project$CommentLayout$minimumY = function (currHeight) {
+	var suggestedY = F2(
+		function (_p0, curr) {
+			var _p1 = _p0;
+			var _p3 = _p1._0;
+			var _p2 = _p1._1;
+			return A2(
+				_elm_lang$core$Debug$log,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'suggestedY ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(_p3),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'/',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(_p2),
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'/',
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(curr),
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'/',
+											_elm_lang$core$Basics$toString(currHeight)))))))),
+				(((_elm_lang$core$Native_Utils.cmp(_p3, curr) > -1) && (_elm_lang$core$Native_Utils.cmp(_p3, curr + currHeight) < 1)) || ((_elm_lang$core$Native_Utils.cmp(_p3, curr) < 1) && (_elm_lang$core$Native_Utils.cmp(_p3 + _p2, curr) > -1))) ? (_p3 + _p2) : curr);
+		});
+	return A2(_elm_lang$core$List$foldr, suggestedY, 0);
+};
+var _user$project$CommentLayout$speed = -100 / _elm_lang$core$Time$second;
+var _user$project$CommentLayout$offsetAtTimeDelta = function (timeDelta) {
+	return _user$project$CommentLayout$speed * _elm_lang$core$Time$inSeconds(timeDelta);
+};
+var _user$project$CommentLayout$duration = F2(
+	function (containerWidth, c) {
+		var width = _user$project$TextMeasure$measureComment(c);
+		return A2(
+			_elm_lang$core$Debug$log,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'duration',
+				_user$project$Comment$text(c)),
+			(width + containerWidth) / _elm_lang$core$Basics$abs(_user$project$CommentLayout$speed));
+	});
+var _user$project$CommentLayout$startTime = function (c) {
+	return A2(
+		_elm_lang$core$Debug$log,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'start time',
+			_user$project$Comment$text(c)),
+		_user$project$Comment$time(c));
+};
+var _user$project$CommentLayout$endTime = F2(
+	function (containerWidth, c) {
+		return A2(
+			_elm_lang$core$Debug$log,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'end time',
+				_user$project$Comment$text(c)),
+			_user$project$CommentLayout$startTime(c) + A2(_user$project$CommentLayout$duration, containerWidth, c));
+	});
+var _user$project$CommentLayout$touchEdgeTime = F2(
+	function (containerWidth, c) {
+		return A2(
+			_elm_lang$core$Debug$log,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'touch edge',
+				_user$project$Comment$text(c)),
+			_user$project$CommentLayout$startTime(c) + (containerWidth / _elm_lang$core$Basics$abs(_user$project$CommentLayout$speed)));
+	});
+var _user$project$CommentLayout$willCollideX = F3(
+	function (containerWidth, curr, prev) {
+		return _elm_lang$core$Native_Utils.cmp(
+			A2(_user$project$CommentLayout$endTime, containerWidth, prev),
+			A2(_user$project$CommentLayout$touchEdgeTime, containerWidth, curr)) > 0;
+	});
+var _user$project$CommentLayout$getLazyYRange = function (_p4) {
+	var _p5 = _p4;
+	var _p6 = _p5._0;
+	var height = _user$project$TextMeasure$getCommentHeight(_p6.comment);
+	return A2(
+		_elm_lang$lazy$Lazy$map,
+		function (y) {
+			return {ctor: '_Tuple2', _0: y, _1: height};
+		},
+		_p6.y);
+};
+var _user$project$CommentLayout$getY = function (_p7) {
+	var _p8 = _p7;
+	return _elm_lang$lazy$Lazy$force(_p8._0.y);
+};
+var _user$project$CommentLayout$getComment = function (_p9) {
+	var _p10 = _p9;
+	return _p10._0.comment;
+};
+var _user$project$CommentLayout$visibleDanmaku = F2(
+	function (containerWidth, time) {
+		var isVisible = function (c) {
+			var comment = _user$project$CommentLayout$getComment(c);
+			return (_elm_lang$core$Native_Utils.cmp(
+				_user$project$CommentLayout$startTime(comment),
+				time) < 0) && (_elm_lang$core$Native_Utils.cmp(
+				A2(_user$project$CommentLayout$endTime, containerWidth, comment),
+				time) > 0);
+		};
+		return _elm_lang$core$List$filter(isVisible);
+	});
+var _user$project$CommentLayout$CommentTween = function (a) {
+	return {ctor: 'CommentTween', _0: a};
+};
+var _user$project$CommentLayout$appendComment = F3(
+	function (containerWidth, comment, danmaku) {
+		var lazyY = A2(
+			_elm_lang$lazy$Lazy$map,
+			_user$project$CommentLayout$minimumY(
+				_user$project$TextMeasure$getCommentHeight(comment)),
+			A2(
+				_elm_lang$lazy$Lazy$map,
+				_elm_lang$core$List$sortBy(_elm_lang$core$Basics$fst),
+				_user$project$LazyUtil$collect(
+					A2(
+						_elm_lang$core$List$map,
+						_user$project$CommentLayout$getLazyYRange,
+						A2(
+							_elm_lang$core$Debug$log,
+							'2222',
+							A2(
+								_elm_lang$core$List$filter,
+								function (_p11) {
+									return A3(
+										_user$project$CommentLayout$willCollideX,
+										containerWidth,
+										comment,
+										_user$project$CommentLayout$getComment(_p11));
+								},
+								A2(
+									_elm_lang$core$Debug$log,
+									'1111',
+									A3(
+										_user$project$CommentLayout$visibleDanmaku,
+										containerWidth,
+										_user$project$Comment$time(comment),
+										danmaku))))))));
+		var tween = _user$project$CommentLayout$CommentTween(
+			{comment: comment, y: lazyY});
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(_elm_lang$core$Debug$log, 'danmaku out', danmaku),
+			_elm_lang$core$Native_List.fromArray(
+				[tween]));
+	});
+var _user$project$CommentLayout$danmaku = function (containerWidth) {
+	return A2(
+		_elm_lang$core$List$foldl,
+		_user$project$CommentLayout$appendComment(containerWidth),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+
 var _user$project$MenuComposer$Env = F2(
 	function (a, b) {
 		return {anilistId: a, filename: b};
 	});
+var _user$project$MenuComposer$Sent = {ctor: 'Sent'};
 var _user$project$MenuComposer$Send = {ctor: 'Send'};
 var _user$project$MenuComposer$SetText = function (a) {
 	return {ctor: 'SetText', _0: a};
 };
 var _user$project$MenuComposer$view = function (_p0) {
 	var _p1 = _p0;
+	var _p2 = _p1._0;
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -8582,8 +9014,9 @@ var _user$project$MenuComposer$view = function (_p0) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$type$('text'),
-						_elm_lang$html$Html_Attributes$value(_p1._0.text),
-						_elm_lang$html$Html_Events$onInput(_user$project$MenuComposer$SetText)
+						_elm_lang$html$Html_Attributes$value(_p2.text),
+						_elm_lang$html$Html_Events$onInput(_user$project$MenuComposer$SetText),
+						_elm_lang$html$Html_Attributes$disabled(_p2.isLoading)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
@@ -8591,7 +9024,8 @@ var _user$project$MenuComposer$view = function (_p0) {
 				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Events$onClick(_user$project$MenuComposer$Send)
+						_elm_lang$html$Html_Events$onClick(_user$project$MenuComposer$Send),
+						_elm_lang$html$Html_Attributes$disabled(_p2.isLoading)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -8601,13 +9035,13 @@ var _user$project$MenuComposer$view = function (_p0) {
 };
 var _user$project$MenuComposer$sendComment = F3(
 	function (anilistId, filename, text) {
-		var success = function (_p2) {
-			return _user$project$MenuComposer$SetText('sent');
+		var success = function (_p3) {
+			return _user$project$MenuComposer$Sent;
 		};
 		var fail = function (error) {
 			return _user$project$MenuComposer$SetText(error);
 		};
-		var task = A3(_user$project$API$postComment, anilistId, filename, text);
+		var task = A4(_user$project$API$postComment, anilistId, filename, 1000, text);
 		return A3(_elm_lang$core$Task$perform, fail, success, task);
 	});
 var _user$project$MenuComposer$Model = function (a) {
@@ -8615,43 +9049,144 @@ var _user$project$MenuComposer$Model = function (a) {
 };
 var _user$project$MenuComposer$init = function (flags) {
 	return _user$project$MenuComposer$Model(
-		{anilistId: flags.anilistId, filename: flags.filename, text: ''});
+		{anilistId: flags.anilistId, filename: flags.filename, text: '', isLoading: false});
 };
 var _user$project$MenuComposer$updateEnv = F2(
-	function (_p3, env) {
-		var _p4 = _p3;
+	function (_p4, env) {
+		var _p5 = _p4;
 		return _user$project$MenuComposer$Model(
 			_elm_lang$core$Native_Utils.update(
-				_p4._0,
+				_p5._0,
 				{anilistId: env.anilistId, filename: env.filename}));
 	});
 var _user$project$MenuComposer$update = F2(
-	function (msg, _p5) {
-		var _p6 = _p5;
-		var _p8 = _p6._0;
-		var _p7 = msg;
-		if (_p7.ctor === 'SetText') {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$MenuComposer$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p8,
-						{text: _p7._0})),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
-		} else {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$MenuComposer$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p8,
-						{text: ''})),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A3(_user$project$MenuComposer$sendComment, _p8.anilistId, _p8.filename, _p8.text)
-					]));
+	function (msg, _p6) {
+		var _p7 = _p6;
+		var _p9 = _p7._0;
+		var _p8 = msg;
+		switch (_p8.ctor) {
+			case 'SetText':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$MenuComposer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p9,
+							{text: _p8._0})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'Send':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$MenuComposer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p9,
+							{text: '', isLoading: true})),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A3(_user$project$MenuComposer$sendComment, _p9.anilistId, _p9.filename, _p9.text)
+						]));
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$MenuComposer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p9,
+							{isLoading: false})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 		}
 	});
+
+var _user$project$CommentViewer$debugDanmaku = function (danmaku) {
+	return _elm_lang$core$Basics$toString(
+		A2(
+			_elm_lang$core$List$map,
+			function (a) {
+				return {
+					ctor: '_Tuple2',
+					_0: a,
+					_1: _user$project$CommentLayout$getY(a)
+				};
+			},
+			danmaku));
+};
+var _user$project$CommentViewer$view = function (_p0) {
+	var _p1 = _p0;
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$String$join,
+							', ',
+							A2(_elm_lang$core$List$map, _user$project$Comment$text, _p1._0.comments)))
+					]))
+			]));
+};
+var _user$project$CommentViewer$slidingComments = _elm_lang$core$Native_Platform.incomingPort('slidingComments', _elm_lang$core$Json_Decode$value);
+var _user$project$CommentViewer$SetComments = function (a) {
+	return {ctor: 'SetComments', _0: a};
+};
+var _user$project$CommentViewer$receiveComments = function (value) {
+	var result = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Comment$decodeList, value);
+	var _p2 = result;
+	if (_p2.ctor === 'Err') {
+		return A2(
+			_elm_lang$core$Debug$log,
+			_p2._0,
+			_user$project$CommentViewer$SetComments(
+				_elm_lang$core$Native_List.fromArray(
+					[])));
+	} else {
+		return _user$project$CommentViewer$SetComments(_p2._0);
+	}
+};
+var _user$project$CommentViewer$subscriptions = function (_p3) {
+	return _user$project$CommentViewer$slidingComments(_user$project$CommentViewer$receiveComments);
+};
+var _user$project$CommentViewer$Model = function (a) {
+	return {ctor: 'Model', _0: a};
+};
+var _user$project$CommentViewer$init = {
+	ctor: '_Tuple2',
+	_0: _user$project$CommentViewer$Model(
+		{
+			comments: _elm_lang$core$Native_List.fromArray(
+				[])
+		}),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$CommentViewer$update = F2(
+	function (msg, _p4) {
+		var _p5 = _p4;
+		var _p6 = msg;
+		var _p7 = _p6._0;
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			A3(
+				_elm_lang$core$Debug$log,
+				_user$project$CommentViewer$debugDanmaku(
+					A2(_user$project$CommentLayout$danmaku, 1024, _p7)),
+				_user$project$CommentViewer$Model,
+				_elm_lang$core$Native_Utils.update(
+					_p5._0,
+					{comments: _p7})),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+var _user$project$CommentViewer$main = {
+	main: _elm_lang$html$Html_App$program(
+		{init: _user$project$CommentViewer$init, update: _user$project$CommentViewer$update, subscriptions: _user$project$CommentViewer$subscriptions, view: _user$project$CommentViewer$view})
+};
 
 var _user$project$Menu$selectedText = function (source) {
 	var _p0 = source;
@@ -8816,7 +9351,7 @@ var _user$project$Menu$init = function (flags) {
 var _user$project$Menu$update = F2(
 	function (msg, _p7) {
 		var _p8 = _p7;
-		var _p14 = _p8._0;
+		var _p16 = _p8._0;
 		var _p9 = msg;
 		switch (_p9.ctor) {
 			case 'SetFlags':
@@ -8825,10 +9360,10 @@ var _user$project$Menu$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p14,
+							_p16,
 							{
 								flags: _p10,
-								composer: A2(_user$project$MenuComposer$updateEnv, _p14.composer, _p10)
+								composer: A2(_user$project$MenuComposer$updateEnv, _p16.composer, _p10)
 							})),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -8838,11 +9373,11 @@ var _user$project$Menu$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p14,
+							_p16,
 							{source: _p11})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p11, _p14.flags.anilistId, _p14.flags.filename),
+							A3(_user$project$Menu$loadComment, _p11, _p16.flags.anilistId, _p16.flags.filename),
 							A3(
 							_elm_lang$core$Task$perform,
 							_elm_lang$core$Basics$identity,
@@ -8858,25 +9393,35 @@ var _user$project$Menu$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p14,
+							_p16,
 							{comments: _p12})),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_user$project$Menu$sendComments(_p12)
 						]));
 			default:
-				var _p13 = A2(_user$project$MenuComposer$update, _p9._0, _p14.composer);
-				var composerModel = _p13._0;
-				var cmd = _p13._1;
+				var _p15 = _p9._0;
+				var reloadCmd = function () {
+					var _p13 = _p15;
+					if (_p13.ctor === 'Sent') {
+						return A3(_user$project$Menu$loadComment, _p16.source, _p16.flags.anilistId, _p16.flags.filename);
+					} else {
+						return _elm_lang$core$Platform_Cmd$none;
+					}
+				}();
+				var _p14 = A2(_user$project$MenuComposer$update, _p15, _p16.composer);
+				var composerModel = _p14._0;
+				var cmd = _p14._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p14,
+							_p16,
 							{composer: composerModel})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A2(_elm_lang$core$Platform_Cmd$map, _user$project$Menu$ComposerMsg, cmd)
+							A2(_elm_lang$core$Platform_Cmd$map, _user$project$Menu$ComposerMsg, cmd),
+							reloadCmd
 						]));
 		}
 	});
@@ -8898,6 +9443,8 @@ var _user$project$Menu$main = {
 };
 
 var Elm = {};
+Elm['CommentViewer'] = Elm['CommentViewer'] || {};
+_elm_lang$core$Native_Platform.addPublicModule(Elm['CommentViewer'], 'CommentViewer', typeof _user$project$CommentViewer$main === 'undefined' ? null : _user$project$CommentViewer$main);
 Elm['Menu'] = Elm['Menu'] || {};
 _elm_lang$core$Native_Platform.addPublicModule(Elm['Menu'], 'Menu', typeof _user$project$Menu$main === 'undefined' ? null : _user$project$Menu$main);
 

@@ -161,7 +161,7 @@ var _user$project$Menu$init = function (flags) {
 var _user$project$Menu$update = F2(
 	function (msg, _p7) {
 		var _p8 = _p7;
-		var _p14 = _p8._0;
+		var _p16 = _p8._0;
 		var _p9 = msg;
 		switch (_p9.ctor) {
 			case 'SetFlags':
@@ -170,10 +170,10 @@ var _user$project$Menu$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p14,
+							_p16,
 							{
 								flags: _p10,
-								composer: A2(_user$project$MenuComposer$updateEnv, _p14.composer, _p10)
+								composer: A2(_user$project$MenuComposer$updateEnv, _p16.composer, _p10)
 							})),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -183,11 +183,11 @@ var _user$project$Menu$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p14,
+							_p16,
 							{source: _p11})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p11, _p14.flags.anilistId, _p14.flags.filename),
+							A3(_user$project$Menu$loadComment, _p11, _p16.flags.anilistId, _p16.flags.filename),
 							A3(
 							_elm_lang$core$Task$perform,
 							_elm_lang$core$Basics$identity,
@@ -203,25 +203,35 @@ var _user$project$Menu$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p14,
+							_p16,
 							{comments: _p12})),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_user$project$Menu$sendComments(_p12)
 						]));
 			default:
-				var _p13 = A2(_user$project$MenuComposer$update, _p9._0, _p14.composer);
-				var composerModel = _p13._0;
-				var cmd = _p13._1;
+				var _p15 = _p9._0;
+				var reloadCmd = function () {
+					var _p13 = _p15;
+					if (_p13.ctor === 'Sent') {
+						return A3(_user$project$Menu$loadComment, _p16.source, _p16.flags.anilistId, _p16.flags.filename);
+					} else {
+						return _elm_lang$core$Platform_Cmd$none;
+					}
+				}();
+				var _p14 = A2(_user$project$MenuComposer$update, _p15, _p16.composer);
+				var composerModel = _p14._0;
+				var cmd = _p14._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p14,
+							_p16,
 							{composer: composerModel})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A2(_elm_lang$core$Platform_Cmd$map, _user$project$Menu$ComposerMsg, cmd)
+							A2(_elm_lang$core$Platform_Cmd$map, _user$project$Menu$ComposerMsg, cmd),
+							reloadCmd
 						]));
 		}
 	});
