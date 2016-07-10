@@ -1,0 +1,15 @@
+.danmaku-menu {
+    position: absolute;
+    z-index: 90;
+}
+
+.danmaku-comments {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: #eeaaaa;
+    z-index: 89;
+}
+

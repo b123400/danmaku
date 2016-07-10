@@ -2,6 +2,7 @@
 -export([guess/2]).   % module attribute
 
 % return a char array to elixir, need to_string to make it a string
+% return notfound, or {found, String}
 guess(Filename, AnilistId) ->
   FilteredFilename = remove_rubbish(Filename),
   Finders = [
