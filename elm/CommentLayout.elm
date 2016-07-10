@@ -54,7 +54,7 @@ touchEdgeTime containerWidth c =
   (startTime c) + containerWidth / (abs <| speed containerWidth c)
 
 speed : Float -> Comment -> Float
-speed containerWidth c = -100 / Time.second
+speed containerWidth c = -(100 + (C.getWidth c)*0.4) / Time.second
 -- Minus 100px per second
 
 xDeltaAtTime : CommentTween -> Time -> Float
@@ -75,7 +75,7 @@ appendComment containerWidth comment danmaku =
     lazyY =
       danmaku
       |> visibleDanmaku (C.time comment)
-      |> List.filter (getComment >> willCollideX containerWidth comment)
+      |> List.filter (willCollideX comment)
       |> List.map getLazyYRange
       |> LazyUtil.collect
       |> Lazy.map (List.sortBy fst)
@@ -97,9 +97,14 @@ visibleDanmaku time =
       (startTime c.comment) <= time && (endTime c.containerWidth c.comment) >= time
   in List.filter isVisible
 
-willCollideX : Float -> Comment -> Comment -> Bool
-willCollideX containerWidth curr prev =
-  (endTime containerWidth prev) > (touchEdgeTime containerWidth curr)
+willCollideX : Comment -> CommentTween -> Bool
+willCollideX curr tween =
+  let
+    prev = getComment tween
+    containerWidth = tween |> \(CommentTween t)-> t.containerWidth
+  in
+    (endTime containerWidth prev) > (touchEdgeTime containerWidth curr) ||
+    (abs <| xDeltaAtTime tween <| C.time curr) < C.getWidth prev
 
 minimumY : Float -> List YRange -> Float
 minimumY currHeight =

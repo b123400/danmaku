@@ -14,16 +14,36 @@ module Comment exposing
 import Json.Decode as D exposing ((:=))
 import Json.Encode as E
 import Time exposing (Time, millisecond, inMilliseconds)
+import Lazy exposing (Lazy, lazy)
 import TextMeasure exposing (Font, font)
 
-
-type Comment = Comment
+type alias CommentBase =
   { text : String
   , time : Time
   }
 
+type alias CommentExtra a =
+  { a
+  | width: Lazy Float
+  }
+
+type alias CommentFull = CommentExtra CommentBase
+
+type Comment = Comment CommentFull
+
+text : Comment -> String
 text (Comment r) = r.text
+
+time : Comment -> Time
 time (Comment r) = r.time
+
+makeComment : CommentBase -> Comment
+makeComment fields =
+  Comment
+    { text = fields.text
+    , time = fields.time
+    , width = lazy (\_-> TextMeasure.measure (getFont 0) fields.text)
+    }
 
 decodeList : D.Decoder (List Comment)
 decodeList = D.list decode
@@ -31,7 +51,7 @@ decodeList = D.list decode
 decode : D.Decoder Comment
 decode =
   D.object2
-    (\s-> \t -> Comment
+    (\s-> \t -> makeComment
       { text = s
       , time = t
       })
@@ -54,7 +74,7 @@ encode (Comment comment) =
     , ("time", E.float (inMilliseconds comment.time))
     ]
 
-getFont : Comment -> Font
+--getFont : Comment -> Font
 getFont _ = font "Arial" 30
 
 styleAttributes : Comment -> List (String, String)
@@ -70,5 +90,4 @@ getHeight c =
   TextMeasure.measureHeight (getFont c) (text c)
 
 getWidth : Comment -> Float
-getWidth c =
-  TextMeasure.measure (getFont c) (text c)
+getWidth (Comment c) = Lazy.force c.width
