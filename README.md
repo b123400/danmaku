@@ -24,6 +24,7 @@ Response:
 		{
 			"updated_at":"2016-01-01T00:00:00Z",
 			"text":"hello",
+			"time":45678,
 			"source":"kari",
 			"metadata":"{}",
 			"inserted_at":"2016-01-01T00:00:00Z",
@@ -41,6 +42,7 @@ Response:
   - `anilist_id` = integer (e.g. `1`)
   - `source` (only support `kari` now)
   - `text`
+  - `time` Time of the comment in the episode
   - `metadata` - Can be any string, default is `{}`
   - `filename` or
   - `episode`
@@ -58,6 +60,7 @@ Response:
 	"comment":{
 		"updated_at":"2016-01-01T00:00:00Z",
 		"text":"hello",
+		"time": 45678,
 		"source":"kari",
 		"metadata":"{}",
 		"inserted_at":"2016-01-01T00:00:00Z",

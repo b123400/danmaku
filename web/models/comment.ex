@@ -9,6 +9,9 @@ defmodule DanmakuApi.Comment do
     field :text, :string
     field :metadata, :string
 
+    # Time of the comment, in ms
+    field :time, :integer
+
     timestamps
   end
 

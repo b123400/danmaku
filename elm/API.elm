@@ -12,13 +12,14 @@ getComments anilistId filename =
   |> Http.get decodeCommentsResponse
   |> Task.mapError getErrorMessage
 
-postComment : Int -> String -> String -> Task String Comment
-postComment anilistId filename text =
+postComment : Int -> String -> Int -> String -> Task String Comment
+postComment anilistId filename time text =
   let
     body = multipart
       [ stringData "anilist_id" <| toString anilistId
       , stringData "filename" filename
       , stringData "text" text
+      , stringData "time" <| toString time
       , stringData "source" "kari"
       ]
   in

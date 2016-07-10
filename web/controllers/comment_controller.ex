@@ -62,6 +62,7 @@ defmodule DanmakuApi.CommentController do
     param_episode = params["episode"]
     filename = params["filename"]
     text = params["text"]
+    time = Integer.parse params["time"]
 
     if filename == nil && param_episode == nil do
       conn
@@ -79,6 +80,7 @@ defmodule DanmakuApi.CommentController do
         anilist_id: anilist_id,
         episode: episode,
         text: text,
+        time: time,
         metadata: params["metadata"] || "{}"
       })
       case Repo.insert(changeset) do
