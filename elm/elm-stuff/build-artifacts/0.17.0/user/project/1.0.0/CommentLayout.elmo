@@ -4,77 +4,29 @@ var _user$project$CommentLayout$minimumY = function (currHeight) {
 			var _p1 = _p0;
 			var _p3 = _p1._0;
 			var _p2 = _p1._1;
-			return A2(
-				_elm_lang$core$Debug$log,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'suggestedY ',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(_p3),
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'/',
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p2),
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									'/',
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(curr),
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											'/',
-											_elm_lang$core$Basics$toString(currHeight)))))))),
-				(((_elm_lang$core$Native_Utils.cmp(_p3, curr) > -1) && (_elm_lang$core$Native_Utils.cmp(_p3, curr + currHeight) < 1)) || ((_elm_lang$core$Native_Utils.cmp(_p3, curr) < 1) && (_elm_lang$core$Native_Utils.cmp(_p3 + _p2, curr) > -1))) ? (_p3 + _p2) : curr);
+			return (((_elm_lang$core$Native_Utils.cmp(_p3, curr) > -1) && (_elm_lang$core$Native_Utils.cmp(_p3, curr + currHeight) < 1)) || ((_elm_lang$core$Native_Utils.cmp(_p3, curr) < 1) && (_elm_lang$core$Native_Utils.cmp(_p3 + _p2, curr) > -1))) ? (_p3 + _p2) : curr;
 		});
 	return A2(_elm_lang$core$List$foldr, suggestedY, 0);
 };
-var _user$project$CommentLayout$speed = -100 / _elm_lang$core$Time$second;
-var _user$project$CommentLayout$offsetAtTimeDelta = function (timeDelta) {
-	return _user$project$CommentLayout$speed * _elm_lang$core$Time$inSeconds(timeDelta);
-};
+var _user$project$CommentLayout$speed = F2(
+	function (containerWidth, c) {
+		return -100 / _elm_lang$core$Time$second;
+	});
 var _user$project$CommentLayout$duration = F2(
 	function (containerWidth, c) {
-		var width = _user$project$TextMeasure$measureComment(c);
-		return A2(
-			_elm_lang$core$Debug$log,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'duration',
-				_user$project$Comment$text(c)),
-			(width + containerWidth) / _elm_lang$core$Basics$abs(_user$project$CommentLayout$speed));
+		var width = _user$project$Comment$getWidth(c);
+		return (width + containerWidth) / _elm_lang$core$Basics$abs(
+			A2(_user$project$CommentLayout$speed, containerWidth, c));
 	});
-var _user$project$CommentLayout$startTime = function (c) {
-	return A2(
-		_elm_lang$core$Debug$log,
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'start time',
-			_user$project$Comment$text(c)),
-		_user$project$Comment$time(c));
-};
+var _user$project$CommentLayout$startTime = _user$project$Comment$time;
 var _user$project$CommentLayout$endTime = F2(
 	function (containerWidth, c) {
-		return A2(
-			_elm_lang$core$Debug$log,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'end time',
-				_user$project$Comment$text(c)),
-			_user$project$CommentLayout$startTime(c) + A2(_user$project$CommentLayout$duration, containerWidth, c));
+		return _user$project$CommentLayout$startTime(c) + A2(_user$project$CommentLayout$duration, containerWidth, c);
 	});
 var _user$project$CommentLayout$touchEdgeTime = F2(
 	function (containerWidth, c) {
-		return A2(
-			_elm_lang$core$Debug$log,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'touch edge',
-				_user$project$Comment$text(c)),
-			_user$project$CommentLayout$startTime(c) + (containerWidth / _elm_lang$core$Basics$abs(_user$project$CommentLayout$speed)));
+		return _user$project$CommentLayout$startTime(c) + (containerWidth / _elm_lang$core$Basics$abs(
+			A2(_user$project$CommentLayout$speed, containerWidth, c)));
 	});
 var _user$project$CommentLayout$willCollideX = F3(
 	function (containerWidth, curr, prev) {
@@ -82,37 +34,49 @@ var _user$project$CommentLayout$willCollideX = F3(
 			A2(_user$project$CommentLayout$endTime, containerWidth, prev),
 			A2(_user$project$CommentLayout$touchEdgeTime, containerWidth, curr)) > 0;
 	});
-var _user$project$CommentLayout$getLazyYRange = function (_p4) {
-	var _p5 = _p4;
-	var _p6 = _p5._0;
-	var height = _user$project$TextMeasure$getCommentHeight(_p6.comment);
+var _user$project$CommentLayout$xDeltaAtTime = F2(
+	function (_p4, t) {
+		var _p5 = _p4;
+		var _p6 = _p5._0;
+		var localTime = t - _user$project$CommentLayout$startTime(_p6.comment);
+		var s = A2(_user$project$CommentLayout$speed, _p6.containerWidth, _p6.comment);
+		return s * localTime;
+	});
+var _user$project$CommentLayout$visibleDanmaku = function (time) {
+	var isVisible = function (_p7) {
+		var _p8 = _p7;
+		var _p9 = _p8._0;
+		return (_elm_lang$core$Native_Utils.cmp(
+			_user$project$CommentLayout$startTime(_p9.comment),
+			time) < 0) && (_elm_lang$core$Native_Utils.cmp(
+			A2(_user$project$CommentLayout$endTime, _p9.containerWidth, _p9.comment),
+			time) > 0);
+	};
+	return _elm_lang$core$List$filter(isVisible);
+};
+var _user$project$CommentLayout$getInitialX = function (_p10) {
+	var _p11 = _p10;
+	return _p11._0.initialX;
+};
+var _user$project$CommentLayout$getLazyYRange = function (_p12) {
+	var _p13 = _p12;
+	var _p14 = _p13._0;
+	var height = _user$project$Comment$getHeight(_p14.comment);
 	return A2(
 		_elm_lang$lazy$Lazy$map,
 		function (y) {
 			return {ctor: '_Tuple2', _0: y, _1: height};
 		},
-		_p6.y);
+		_p14.y);
 };
-var _user$project$CommentLayout$getY = function (_p7) {
-	var _p8 = _p7;
-	return _elm_lang$lazy$Lazy$force(_p8._0.y);
+var _user$project$CommentLayout$getY = function (_p15) {
+	var _p16 = _p15;
+	return _elm_lang$lazy$Lazy$force(_p16._0.y);
 };
-var _user$project$CommentLayout$getComment = function (_p9) {
-	var _p10 = _p9;
-	return _p10._0.comment;
+var _user$project$CommentLayout$getComment = function (_p17) {
+	var _p18 = _p17;
+	return _p18._0.comment;
 };
-var _user$project$CommentLayout$visibleDanmaku = F2(
-	function (containerWidth, time) {
-		var isVisible = function (c) {
-			var comment = _user$project$CommentLayout$getComment(c);
-			return (_elm_lang$core$Native_Utils.cmp(
-				_user$project$CommentLayout$startTime(comment),
-				time) < 0) && (_elm_lang$core$Native_Utils.cmp(
-				A2(_user$project$CommentLayout$endTime, containerWidth, comment),
-				time) > 0);
-		};
-		return _elm_lang$core$List$filter(isVisible);
-	});
 var _user$project$CommentLayout$CommentTween = function (a) {
 	return {ctor: 'CommentTween', _0: a};
 };
@@ -121,7 +85,7 @@ var _user$project$CommentLayout$appendComment = F3(
 		var lazyY = A2(
 			_elm_lang$lazy$Lazy$map,
 			_user$project$CommentLayout$minimumY(
-				_user$project$TextMeasure$getCommentHeight(comment)),
+				_user$project$Comment$getHeight(comment)),
 			A2(
 				_elm_lang$lazy$Lazy$map,
 				_elm_lang$core$List$sortBy(_elm_lang$core$Basics$fst),
@@ -130,30 +94,23 @@ var _user$project$CommentLayout$appendComment = F3(
 						_elm_lang$core$List$map,
 						_user$project$CommentLayout$getLazyYRange,
 						A2(
-							_elm_lang$core$Debug$log,
-							'2222',
+							_elm_lang$core$List$filter,
+							function (_p19) {
+								return A3(
+									_user$project$CommentLayout$willCollideX,
+									containerWidth,
+									comment,
+									_user$project$CommentLayout$getComment(_p19));
+							},
 							A2(
-								_elm_lang$core$List$filter,
-								function (_p11) {
-									return A3(
-										_user$project$CommentLayout$willCollideX,
-										containerWidth,
-										comment,
-										_user$project$CommentLayout$getComment(_p11));
-								},
-								A2(
-									_elm_lang$core$Debug$log,
-									'1111',
-									A3(
-										_user$project$CommentLayout$visibleDanmaku,
-										containerWidth,
-										_user$project$Comment$time(comment),
-										danmaku))))))));
+								_user$project$CommentLayout$visibleDanmaku,
+								_user$project$Comment$time(comment),
+								danmaku))))));
 		var tween = _user$project$CommentLayout$CommentTween(
-			{comment: comment, y: lazyY});
+			{comment: comment, y: lazyY, initialX: containerWidth, containerWidth: containerWidth});
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
-			A2(_elm_lang$core$Debug$log, 'danmaku out', danmaku),
+			danmaku,
 			_elm_lang$core$Native_List.fromArray(
 				[tween]));
 	});

@@ -1,18 +1,64 @@
-var _user$project$CommentViewer$debugDanmaku = function (danmaku) {
-	return _elm_lang$core$Basics$toString(
-		A2(
-			_elm_lang$core$List$map,
-			function (a) {
-				return {
-					ctor: '_Tuple2',
-					_0: a,
-					_1: _user$project$CommentLayout$getY(a)
-				};
-			},
-			danmaku));
-};
 var _user$project$CommentViewer$view = function (_p0) {
 	var _p1 = _p0;
+	var _p3 = _p1._0;
+	var commentDiv = F2(
+		function (time, tween) {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$style(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{
+								ctor: '_Tuple2',
+								_0: 'left',
+								_1: A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(
+										_user$project$CommentLayout$getInitialX(tween)),
+									'px')
+							},
+								{
+								ctor: '_Tuple2',
+								_0: 'top',
+								_1: A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(
+										_user$project$CommentLayout$getY(tween)),
+									'px')
+							},
+								{
+								ctor: '_Tuple2',
+								_0: 'transform',
+								_1: A2(
+									_elm_lang$core$Basics_ops['++'],
+									'translateX(',
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											A2(_user$project$CommentLayout$xDeltaAtTime, tween, time)),
+										'px)'))
+							},
+								{ctor: '_Tuple2', _0: 'position', _1: 'absolute'}
+							]))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						_user$project$Comment$text(
+							_user$project$CommentLayout$getComment(tween)))
+					]));
+		});
+	var delta = function () {
+		var _p2 = {ctor: '_Tuple2', _0: _p3.startTime, _1: _p3.currentTime};
+		if (((_p2.ctor === '_Tuple2') && (_p2._0.ctor === 'Just')) && (_p2._1.ctor === 'Just')) {
+			return _p2._1._0 - _p2._0._0;
+		} else {
+			return 0;
+		}
+	}();
+	var visibleComments = A2(_user$project$CommentLayout$visibleDanmaku, delta, _p3.danmaku);
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -23,36 +69,40 @@ var _user$project$CommentViewer$view = function (_p0) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(
-						A2(
-							_elm_lang$core$String$join,
-							', ',
-							A2(_elm_lang$core$List$map, _user$project$Comment$text, _p1._0.comments)))
-					]))
+				A2(
+					_elm_lang$core$List$map,
+					commentDiv(delta),
+					visibleComments))
 			]));
 };
 var _user$project$CommentViewer$slidingComments = _elm_lang$core$Native_Platform.incomingPort('slidingComments', _elm_lang$core$Json_Decode$value);
+var _user$project$CommentViewer$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
+};
 var _user$project$CommentViewer$SetComments = function (a) {
 	return {ctor: 'SetComments', _0: a};
 };
 var _user$project$CommentViewer$receiveComments = function (value) {
 	var result = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Comment$decodeList, value);
-	var _p2 = result;
-	if (_p2.ctor === 'Err') {
+	var _p4 = result;
+	if (_p4.ctor === 'Err') {
 		return A2(
 			_elm_lang$core$Debug$log,
-			_p2._0,
+			_p4._0,
 			_user$project$CommentViewer$SetComments(
 				_elm_lang$core$Native_List.fromArray(
 					[])));
 	} else {
-		return _user$project$CommentViewer$SetComments(_p2._0);
+		return _user$project$CommentViewer$SetComments(_p4._0);
 	}
 };
-var _user$project$CommentViewer$subscriptions = function (_p3) {
-	return _user$project$CommentViewer$slidingComments(_user$project$CommentViewer$receiveComments);
+var _user$project$CommentViewer$subscriptions = function (_p5) {
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$CommentViewer$slidingComments(_user$project$CommentViewer$receiveComments),
+				_elm_lang$animation_frame$AnimationFrame$times(_user$project$CommentViewer$Tick)
+			]));
 };
 var _user$project$CommentViewer$Model = function (a) {
 	return {ctor: 'Model', _0: a};
@@ -62,27 +112,51 @@ var _user$project$CommentViewer$init = {
 	_0: _user$project$CommentViewer$Model(
 		{
 			comments: _elm_lang$core$Native_List.fromArray(
-				[])
+				[]),
+			danmaku: _elm_lang$core$Native_List.fromArray(
+				[]),
+			startTime: _elm_lang$core$Maybe$Nothing,
+			currentTime: _elm_lang$core$Maybe$Nothing
 		}),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$CommentViewer$update = F2(
-	function (msg, _p4) {
-		var _p5 = _p4;
-		var _p6 = msg;
-		var _p7 = _p6._0;
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			A3(
-				_elm_lang$core$Debug$log,
-				_user$project$CommentViewer$debugDanmaku(
-					A2(_user$project$CommentLayout$danmaku, 1024, _p7)),
-				_user$project$CommentViewer$Model,
-				_elm_lang$core$Native_Utils.update(
-					_p5._0,
-					{comments: _p7})),
-			_elm_lang$core$Native_List.fromArray(
-				[]));
+	function (msg, _p6) {
+		var _p7 = _p6;
+		var _p11 = _p7._0;
+		var _p8 = msg;
+		if (_p8.ctor === 'SetComments') {
+			var _p9 = _p8._0;
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_user$project$CommentViewer$Model(
+					_elm_lang$core$Native_Utils.update(
+						_p11,
+						{
+							comments: _p9,
+							danmaku: A2(_user$project$CommentLayout$danmaku, 1024, _p9)
+						})),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		} else {
+			var _p10 = _p8._0;
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_user$project$CommentViewer$Model(
+					_elm_lang$core$Native_Utils.update(
+						_p11,
+						{
+							startTime: _elm_lang$core$Maybe$oneOf(
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_p11.startTime,
+										_elm_lang$core$Maybe$Just(_p10)
+									])),
+							currentTime: _elm_lang$core$Maybe$Just(_p10)
+						})),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		}
 	});
 var _user$project$CommentViewer$main = {
 	main: _elm_lang$html$Html_App$program(

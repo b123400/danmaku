@@ -1,25 +1,28 @@
-var _user$project$Comment$encode = function (_p0) {
-	var _p1 = _p0;
-	var _p2 = _p1._0;
+var _user$project$Comment$getFont = function (_p0) {
+	return A2(_user$project$TextMeasure$font, 'Arial', 16);
+};
+var _user$project$Comment$encode = function (_p1) {
+	var _p2 = _p1;
+	var _p3 = _p2._0;
 	return _elm_lang$core$Json_Encode$object(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{
 				ctor: '_Tuple2',
 				_0: 'text',
-				_1: _elm_lang$core$Json_Encode$string(_p2.text)
+				_1: _elm_lang$core$Json_Encode$string(_p3.text)
 			},
 				{
 				ctor: '_Tuple2',
 				_0: 'time',
 				_1: _elm_lang$core$Json_Encode$float(
-					_elm_lang$core$Time$inMilliseconds(_p2.time))
+					_elm_lang$core$Time$inMilliseconds(_p3.time))
 			}
 			]));
 };
-var _user$project$Comment$encodeList = function (_p3) {
+var _user$project$Comment$encodeList = function (_p4) {
 	return _elm_lang$core$Json_Encode$list(
-		A2(_elm_lang$core$List$map, _user$project$Comment$encode, _p3));
+		A2(_elm_lang$core$List$map, _user$project$Comment$encode, _p4));
 };
 var _user$project$Comment$timeDecoder = A2(
 	_elm_lang$core$Json_Decode$map,
@@ -28,13 +31,25 @@ var _user$project$Comment$timeDecoder = A2(
 			return x * y;
 		})(_elm_lang$core$Time$millisecond),
 	_elm_lang$core$Json_Decode$float);
-var _user$project$Comment$time = function (_p4) {
-	var _p5 = _p4;
-	return _p5._0.time;
+var _user$project$Comment$time = function (_p5) {
+	var _p6 = _p5;
+	return _p6._0.time;
 };
-var _user$project$Comment$text = function (_p6) {
-	var _p7 = _p6;
-	return _p7._0.text;
+var _user$project$Comment$text = function (_p7) {
+	var _p8 = _p7;
+	return _p8._0.text;
+};
+var _user$project$Comment$getHeight = function (c) {
+	return A2(
+		_user$project$TextMeasure$measureHeight,
+		_user$project$Comment$getFont(c),
+		_user$project$Comment$text(c));
+};
+var _user$project$Comment$getWidth = function (c) {
+	return A2(
+		_user$project$TextMeasure$measure,
+		_user$project$Comment$getFont(c),
+		_user$project$Comment$text(c));
 };
 var _user$project$Comment$Comment = function (a) {
 	return {ctor: 'Comment', _0: a};

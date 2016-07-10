@@ -1,8 +1,19 @@
-module Comment exposing (Comment, text, decodeList, decode, encodeList, encode, time)
+module Comment exposing
+  ( Comment
+  , text
+  , decodeList
+  , decode
+  , encodeList
+  , encode
+  , time
+  , getWidth
+  , getHeight
+  )
 
 import Json.Decode as D exposing ((:=))
 import Json.Encode as E
 import Time exposing (Time, millisecond, inMilliseconds)
+import TextMeasure exposing (Font, font)
 
 
 type Comment = Comment
@@ -41,3 +52,14 @@ encode (Comment comment) =
     [ ("text", E.string comment.text)
     , ("time", E.float (inMilliseconds comment.time))
     ]
+
+getFont : Comment -> Font
+getFont _ = font "Arial" 16
+
+getHeight : Comment -> Float
+getHeight c =
+  TextMeasure.measureHeight (getFont c) (text c)
+
+getWidth : Comment -> Float
+getWidth c =
+  TextMeasure.measure (getFont c) (text c)

@@ -1,12 +1,12 @@
-module CommentLayout exposing (Danmaku, danmaku, getY)
+module CommentLayout exposing (Danmaku, danmaku, getY, getInitialX, getComment, xDeltaAtTime, visibleDanmaku)
 
 import Maybe exposing (Maybe(..))
 import Lazy exposing (Lazy)
 import Time exposing (Time, inSeconds)
 import List
+import Debug
 
 import Comment as C exposing (Comment)
-import TextMeasure as Measure exposing (measureComment, getCommentHeight)
 import LazyUtil
 
 type alias Danmaku = List CommentTween
@@ -14,6 +14,8 @@ type alias Danmaku = List CommentTween
 type CommentTween = CommentTween
   { comment : Comment
   , y : Lazy Float
+  , initialX : Float
+  , containerWidth : Float
   }
 
 type alias YRange = (Float, Float)
@@ -26,19 +28,21 @@ getY (CommentTween t) = Lazy.force t.y
 
 getLazyYRange : CommentTween -> Lazy YRange
 getLazyYRange (CommentTween t) =
-  let height = getCommentHeight t.comment
+  let height = C.getHeight t.comment
   in  Lazy.map (\y-> (y, height)) t.y
 
+getInitialX : CommentTween -> Float
+getInitialX (CommentTween t) = t.initialX
+
 startTime : Comment -> Time
-startTime c =
-  (C.time c)
+startTime = C.time
 
 duration : Float -> Comment -> Time
 duration containerWidth c =
   let
-    width = measureComment c
+    width = C.getWidth c
   in
-    (width + containerWidth) / (abs speed)
+    (width + containerWidth) / (abs <| speed containerWidth c)
 
 endTime : Float -> Comment -> Time
 endTime containerWidth c =
@@ -46,15 +50,19 @@ endTime containerWidth c =
 
 touchEdgeTime : Float -> Comment -> Time
 touchEdgeTime containerWidth c =
-  (startTime c) + containerWidth / (abs speed)
+  (startTime c) + containerWidth / (abs <| speed containerWidth c)
 
-speed : Float
-speed = -100 / Time.second
+speed : Float -> Comment -> Float
+speed containerWidth c = -100 / Time.second
 -- Minus 100px per second
 
-offsetAtTimeDelta : Time -> Float
-offsetAtTimeDelta timeDelta =
-  speed * (inSeconds timeDelta)
+xDeltaAtTime : CommentTween -> Time -> Float
+xDeltaAtTime (CommentTween tween) t =
+  let
+    s = speed tween.containerWidth tween.comment
+    localTime = t - (startTime tween.comment)
+  in
+    s * localTime
 
 danmaku : Float -> List Comment -> Danmaku
 danmaku containerWidth =
@@ -65,26 +73,27 @@ appendComment containerWidth comment danmaku =
   let
     lazyY =
       danmaku
-      |> visibleDanmaku containerWidth (C.time comment)
+      |> visibleDanmaku (C.time comment)
       |> List.filter (getComment >> willCollideX containerWidth comment)
       |> List.map getLazyYRange
       |> LazyUtil.collect
       |> Lazy.map (List.sortBy fst)
-      |> Lazy.map (minimumY (getCommentHeight comment))
+      |> Lazy.map (minimumY <| C.getHeight comment)
     tween =
       CommentTween
         { comment = comment
         , y = lazyY
+        , initialX = containerWidth
+        , containerWidth = containerWidth
         }
   in
     danmaku ++ [tween]
 
-visibleDanmaku : Float -> Time -> Danmaku -> Danmaku
-visibleDanmaku containerWidth time =
+visibleDanmaku : Time -> Danmaku -> Danmaku
+visibleDanmaku time =
   let
-    isVisible c =
-      let comment = getComment c
-      in (startTime comment) < time && (endTime containerWidth comment) > time
+    isVisible (CommentTween c) =
+      (startTime c.comment) < time && (endTime c.containerWidth c.comment) > time
   in List.filter isVisible
 
 willCollideX : Float -> Comment -> Comment -> Bool

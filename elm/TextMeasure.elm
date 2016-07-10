@@ -1,8 +1,7 @@
-module TextMeasure exposing (font, measure, measureComment, getCommentHeight)
+module TextMeasure exposing (Font, font, measure, measureHeight)
 
 import String
 import Native.TextMeasure
-import Comment as C exposing (Comment)
 
 -- Family, font size
 type Font = Font String Float
@@ -30,12 +29,5 @@ measure : Font -> String -> Float
 measure font =
   nativeMeasure (makeFontString font)
 
-getCommentFont _ = Font "Arial" 16
-getCommentHeight c =
-  c
-  |> getCommentFont
-  |> fontSize
-
-measureComment : Comment -> Float
-measureComment c =
-  measure (getCommentFont c) (C.text c)
+measureHeight : Font -> String -> Float
+measureHeight f _ = fontSize f

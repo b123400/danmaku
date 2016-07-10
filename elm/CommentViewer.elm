@@ -5,12 +5,16 @@ import String
 import Result exposing (Result(Ok, Err))
 import Platform.Sub as Sub
 import Platform.Cmd as Cmd exposing ((!))
+import Time exposing (Time)
+import Maybe exposing (Maybe(..))
 import Debug
 
 import Html exposing (Html, button, div, text)
 import Html.App as Html
 import Html.Events exposing (onClick)
+import Html.Attributes exposing (style)
 import Json.Decode as JD
+import AnimationFrame
 
 import Comment as C exposing (Comment)
 import MenuComposer as MC
@@ -26,14 +30,23 @@ main =
 
 type Msg
   = SetComments (List Comment)
+  | Tick Time
 
 type Model = Model
   { comments : List Comment
+  , danmaku : Danmaku
+  , startTime : Maybe Time
+  , currentTime : Maybe Time
   }
 
 init : (Model, Cmd a)
 init =
-  ( Model { comments = [] }
+  ( Model
+      { comments = []
+      , danmaku = []
+      , startTime = Nothing
+      , currentTime = Nothing
+      }
   , Cmd.none
   )
 
@@ -47,28 +60,58 @@ receiveComments value =
     Ok comments -> SetComments comments
 
 
-subscriptions _ = slidingComments receiveComments
+subscriptions _ =
+  Sub.batch
+    [ slidingComments receiveComments
+    , AnimationFrame.times Tick
+    ]
 
 
 update msg (Model model) =
   case msg of
+
     SetComments c ->
-      Debug.log (CommentLayout.danmaku 1024 c |> debugDanmaku)
-      Model { model | comments = c } ! []
+      Model
+        { model
+        | comments = c
+        , danmaku = CommentLayout.danmaku 1024 c
+        }
+      ! []
+
+    Tick time ->
+      Model
+        { model
+        | startTime = Maybe.oneOf [model.startTime, Just time]
+        , currentTime = Just time
+        }
+      ! []
 
 
 view : Model -> Html Msg
 view (Model model) =
-  div []
-    [ div [] [ model.comments
-               |> List.map C.text 
-               |> String.join ", " 
-               |> text
-             ]
-    ]
+  let
 
-debugDanmaku : Danmaku -> String
-debugDanmaku danmaku =
-  danmaku
-  |> List.map (\a-> (a, CommentLayout.getY a))
-  |> toString
+    delta =
+      case (model.startTime, model.currentTime) of
+        (Just start, Just current)->
+          current - start
+        _ -> 0
+
+    visibleComments =
+      CommentLayout.visibleDanmaku delta model.danmaku
+
+    commentDiv time tween =
+      div
+        [ style
+          [ ("left", (toString <| CommentLayout.getInitialX tween) ++ "px")
+          , ("top", (toString <| CommentLayout.getY tween) ++ "px")
+          , ("transform", "translateX(" ++ (toString <| CommentLayout.xDeltaAtTime tween time) ++ "px)")
+          , ("position", "absolute")
+          ]
+        ]
+        [ tween |> CommentLayout.getComment |> C.text |> text
+        ]
+  in
+    div []
+      [ div [] <| List.map (commentDiv delta) visibleComments
+      ]
