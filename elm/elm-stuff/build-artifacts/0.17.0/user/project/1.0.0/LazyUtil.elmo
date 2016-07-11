@@ -13,7 +13,7 @@ var _user$project$LazyUtil$foldr = function (reduce) {
 						});
 				});
 		});
-	return _elm_lang$core$List$foldl(reduce$);
+	return _elm_lang$core$List$foldr(reduce$);
 };
 var _user$project$LazyUtil$foldl = function (reduce) {
 	var reduce$ = F2(
@@ -32,19 +32,18 @@ var _user$project$LazyUtil$foldl = function (reduce) {
 		});
 	return _elm_lang$core$List$foldl(reduce$);
 };
-var _user$project$LazyUtil$collect = function (lazies) {
+var _user$project$LazyUtil$collect = function () {
 	var reduce$ = F2(
 		function (a, b) {
 			return _elm_lang$lazy$Lazy$lazy(
 				_elm_lang$core$Basics$always(
 					A2(_elm_lang$core$List_ops['::'], a, b)));
 		});
-	return A3(
+	return A2(
 		_user$project$LazyUtil$foldl,
 		reduce$,
 		_elm_lang$lazy$Lazy$lazy(
 			_elm_lang$core$Basics$always(
 				_elm_lang$core$Native_List.fromArray(
-					[]))),
-		lazies);
-};
+					[]))));
+}();

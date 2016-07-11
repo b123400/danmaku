@@ -66,8 +66,9 @@ xDeltaAtTime (CommentTween tween) t =
     s * localTime
 
 danmaku : Float -> List Comment -> Danmaku
-danmaku containerWidth =
-  List.foldl (appendComment containerWidth) []
+danmaku containerWidth = case containerWidth of
+  0 -> \_-> []
+  _ -> List.foldl (appendComment containerWidth) []
 
 appendComment : Float -> Comment -> Danmaku -> Danmaku
 appendComment containerWidth comment danmaku =

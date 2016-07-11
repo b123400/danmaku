@@ -120,9 +120,17 @@ var _user$project$CommentLayout$appendComment = F3(
 				[tween]));
 	});
 var _user$project$CommentLayout$danmaku = function (containerWidth) {
-	return A2(
-		_elm_lang$core$List$foldl,
-		_user$project$CommentLayout$appendComment(containerWidth),
-		_elm_lang$core$Native_List.fromArray(
-			[]));
+	var _p21 = containerWidth;
+	if (_p21 === 0) {
+		return function (_p22) {
+			return _elm_lang$core$Native_List.fromArray(
+				[]);
+		};
+	} else {
+		return A2(
+			_elm_lang$core$List$foldl,
+			_user$project$CommentLayout$appendComment(containerWidth),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	}
 };

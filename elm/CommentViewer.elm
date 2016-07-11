@@ -13,6 +13,7 @@ import Html exposing (Html, button, div, text)
 import Html.App as Html
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (style)
+import Window exposing (Size)
 import Json.Decode as JD
 import AnimationFrame
 
@@ -31,23 +32,29 @@ main =
 type Msg
   = SetComments (List Comment)
   | Tick Time
+  | Resize Size
 
 type Model = Model
   { comments : List Comment
   , danmaku : Danmaku
   , startTime : Maybe Time
   , currentTime : Maybe Time
+  , size : Size
   }
 
-init : (Model, Cmd a)
+init : (Model, Cmd Msg)
 init =
   ( Model
       { comments = []
       , danmaku = []
       , startTime = Nothing
       , currentTime = Nothing
+      , size =
+        { width = 0
+        , height = 0
+        }
       }
-  , Cmd.none
+  , Task.perform identity Resize Window.size
   )
 
 port slidingComments : (JD.Value -> msg) -> Sub msg
@@ -64,6 +71,7 @@ subscriptions _ =
   Sub.batch
     [ slidingComments receiveComments
     , AnimationFrame.times Tick
+    , Window.resizes Resize
     ]
 
 
@@ -74,7 +82,7 @@ update msg (Model model) =
       Model
         { model
         | comments = c
-        , danmaku = CommentLayout.danmaku 1024 c
+        , danmaku = CommentLayout.danmaku (toFloat model.size.width) c
         }
       ! []
 
@@ -83,6 +91,14 @@ update msg (Model model) =
         { model
         | startTime = Maybe.oneOf [model.startTime, Just time]
         , currentTime = Just time
+        }
+      ! []
+
+    Resize size ->
+      Model
+        { model
+        | size = size
+        , danmaku = CommentLayout.danmaku (toFloat size.width) model.comments
         }
       ! []
 

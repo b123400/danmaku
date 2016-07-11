@@ -100,6 +100,9 @@ var _user$project$CommentViewer$view = function (_p0) {
 			]));
 };
 var _user$project$CommentViewer$slidingComments = _elm_lang$core$Native_Platform.incomingPort('slidingComments', _elm_lang$core$Json_Decode$value);
+var _user$project$CommentViewer$Resize = function (a) {
+	return {ctor: 'Resize', _0: a};
+};
 var _user$project$CommentViewer$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
@@ -125,7 +128,8 @@ var _user$project$CommentViewer$subscriptions = function (_p5) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_user$project$CommentViewer$slidingComments(_user$project$CommentViewer$receiveComments),
-				_elm_lang$animation_frame$AnimationFrame$times(_user$project$CommentViewer$Tick)
+				_elm_lang$animation_frame$AnimationFrame$times(_user$project$CommentViewer$Tick),
+				_elm_lang$window$Window$resizes(_user$project$CommentViewer$Resize)
 			]));
 };
 var _user$project$CommentViewer$Model = function (a) {
@@ -140,46 +144,67 @@ var _user$project$CommentViewer$init = {
 			danmaku: _elm_lang$core$Native_List.fromArray(
 				[]),
 			startTime: _elm_lang$core$Maybe$Nothing,
-			currentTime: _elm_lang$core$Maybe$Nothing
+			currentTime: _elm_lang$core$Maybe$Nothing,
+			size: {width: 0, height: 0}
 		}),
-	_1: _elm_lang$core$Platform_Cmd$none
+	_1: A3(_elm_lang$core$Task$perform, _elm_lang$core$Basics$identity, _user$project$CommentViewer$Resize, _elm_lang$window$Window$size)
 };
 var _user$project$CommentViewer$update = F2(
 	function (msg, _p6) {
 		var _p7 = _p6;
-		var _p11 = _p7._0;
+		var _p12 = _p7._0;
 		var _p8 = msg;
-		if (_p8.ctor === 'SetComments') {
-			var _p9 = _p8._0;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$CommentViewer$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p11,
-						{
-							comments: _p9,
-							danmaku: A2(_user$project$CommentLayout$danmaku, 1024, _p9)
-						})),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
-		} else {
-			var _p10 = _p8._0;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$CommentViewer$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p11,
-						{
-							startTime: _elm_lang$core$Maybe$oneOf(
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_p11.startTime,
-										_elm_lang$core$Maybe$Just(_p10)
-									])),
-							currentTime: _elm_lang$core$Maybe$Just(_p10)
-						})),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
+		switch (_p8.ctor) {
+			case 'SetComments':
+				var _p9 = _p8._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{
+								comments: _p9,
+								danmaku: A2(
+									_user$project$CommentLayout$danmaku,
+									_elm_lang$core$Basics$toFloat(_p12.size.width),
+									_p9)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'Tick':
+				var _p10 = _p8._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{
+								startTime: _elm_lang$core$Maybe$oneOf(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_p12.startTime,
+											_elm_lang$core$Maybe$Just(_p10)
+										])),
+								currentTime: _elm_lang$core$Maybe$Just(_p10)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			default:
+				var _p11 = _p8._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{
+								size: _p11,
+								danmaku: A2(
+									_user$project$CommentLayout$danmaku,
+									_elm_lang$core$Basics$toFloat(_p11.width),
+									_p12.comments)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 		}
 	});
 var _user$project$CommentViewer$main = {

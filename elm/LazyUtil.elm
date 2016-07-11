@@ -19,12 +19,12 @@ foldr reduce =
       lazyA `andThen` \a ->
       lazyB `andThen` \b ->
       reduce a b
-  in List.foldl reduce'
+  in List.foldr reduce'
 
 collect : List (Lazy a) -> Lazy (List a)
-collect lazies =
+collect =
   let
     reduce' a b =
       lazy <| always <| a :: b
-  in foldl reduce' (lazy <| always []) lazies
+  in foldl reduce' (lazy <| always [])
 

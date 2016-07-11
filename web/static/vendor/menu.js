@@ -6206,6 +6206,43 @@ var _elm_lang$core$Json_Decode$dict = function (decoder) {
 };
 var _elm_lang$core$Json_Decode$Decoder = {ctor: 'Decoder'};
 
+var _elm_lang$dom$Native_Dom = function() {
+
+function on(node)
+{
+	return function(eventName, decoder, toTask)
+	{
+		return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
+
+			function performTask(event)
+			{
+				var result = A2(_elm_lang$core$Json_Decode$decodeValue, decoder, event);
+				if (result.ctor === 'Ok')
+				{
+					_elm_lang$core$Native_Scheduler.rawSpawn(toTask(result._0));
+				}
+			}
+
+			node.addEventListener(eventName, performTask);
+
+			return function()
+			{
+				node.removeEventListener(eventName, performTask);
+			};
+		});
+	};
+}
+
+return {
+	onDocument: F3(on(document)),
+	onWindow: F3(on(window))
+};
+
+}();
+
+var _elm_lang$dom$Dom_LowLevel$onWindow = _elm_lang$dom$Native_Dom.onWindow;
+var _elm_lang$dom$Dom_LowLevel$onDocument = _elm_lang$dom$Native_Dom.onDocument;
+
 //import Native.Json //
 
 var _elm_lang$virtual_dom$Native_VirtualDom = function() {
@@ -8397,6 +8434,128 @@ var _elm_lang$lazy$Lazy$andThen = F2(
 			});
 	});
 
+var _elm_lang$window$Native_Window = function()
+{
+
+var size = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)	{
+	callback(_elm_lang$core$Native_Scheduler.succeed({
+		width: window.innerWidth,
+		height: window.innerHeight
+	}));
+});
+
+return {
+	size: size
+};
+
+}();
+var _elm_lang$window$Window_ops = _elm_lang$window$Window_ops || {};
+_elm_lang$window$Window_ops['&>'] = F2(
+	function (t1, t2) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			t1,
+			function (_p0) {
+				return t2;
+			});
+	});
+var _elm_lang$window$Window$onSelfMsg = F3(
+	function (router, dimensions, state) {
+		var _p1 = state;
+		if (_p1.ctor === 'Nothing') {
+			return _elm_lang$core$Task$succeed(state);
+		} else {
+			var send = function (_p2) {
+				var _p3 = _p2;
+				return A2(
+					_elm_lang$core$Platform$sendToApp,
+					router,
+					_p3._0(dimensions));
+			};
+			return A2(
+				_elm_lang$window$Window_ops['&>'],
+				_elm_lang$core$Task$sequence(
+					A2(_elm_lang$core$List$map, send, _p1._0.subs)),
+				_elm_lang$core$Task$succeed(state));
+		}
+	});
+var _elm_lang$window$Window$init = _elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing);
+var _elm_lang$window$Window$size = _elm_lang$window$Native_Window.size;
+var _elm_lang$window$Window$width = A2(
+	_elm_lang$core$Task$map,
+	function (_) {
+		return _.width;
+	},
+	_elm_lang$window$Window$size);
+var _elm_lang$window$Window$height = A2(
+	_elm_lang$core$Task$map,
+	function (_) {
+		return _.height;
+	},
+	_elm_lang$window$Window$size);
+var _elm_lang$window$Window$onEffects = F3(
+	function (router, newSubs, oldState) {
+		var _p4 = {ctor: '_Tuple2', _0: oldState, _1: newSubs};
+		if (_p4._0.ctor === 'Nothing') {
+			if (_p4._1.ctor === '[]') {
+				return _elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing);
+			} else {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					_elm_lang$core$Process$spawn(
+						A3(
+							_elm_lang$dom$Dom_LowLevel$onWindow,
+							'resize',
+							_elm_lang$core$Json_Decode$succeed(
+								{ctor: '_Tuple0'}),
+							function (_p5) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									_elm_lang$window$Window$size,
+									_elm_lang$core$Platform$sendToSelf(router));
+							})),
+					function (pid) {
+						return _elm_lang$core$Task$succeed(
+							_elm_lang$core$Maybe$Just(
+								{subs: newSubs, pid: pid}));
+					});
+			}
+		} else {
+			if (_p4._1.ctor === '[]') {
+				return A2(
+					_elm_lang$window$Window_ops['&>'],
+					_elm_lang$core$Process$kill(_p4._0._0.pid),
+					_elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing));
+			} else {
+				return _elm_lang$core$Task$succeed(
+					_elm_lang$core$Maybe$Just(
+						{subs: newSubs, pid: _p4._0._0.pid}));
+			}
+		}
+	});
+var _elm_lang$window$Window$subscription = _elm_lang$core$Native_Platform.leaf('Window');
+var _elm_lang$window$Window$Size = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
+var _elm_lang$window$Window$MySub = function (a) {
+	return {ctor: 'MySub', _0: a};
+};
+var _elm_lang$window$Window$resizes = function (tagger) {
+	return _elm_lang$window$Window$subscription(
+		_elm_lang$window$Window$MySub(tagger));
+};
+var _elm_lang$window$Window$subMap = F2(
+	function (func, _p6) {
+		var _p7 = _p6;
+		return _elm_lang$window$Window$MySub(
+			function (_p8) {
+				return func(
+					_p7._0(_p8));
+			});
+	});
+_elm_lang$core$Native_Platform.effectManagers['Window'] = {pkg: 'elm-lang/window', init: _elm_lang$window$Window$init, onEffects: _elm_lang$window$Window$onEffects, onSelfMsg: _elm_lang$window$Window$onSelfMsg, tag: 'sub', subMap: _elm_lang$window$Window$subMap};
+
 //import Dict, List, Maybe, Native.Scheduler //
 
 var _evancz$elm_http$Native_Http = function() {
@@ -8822,7 +8981,11 @@ var _user$project$TextMeasure$Font = F2(
 	});
 var _user$project$TextMeasure$font = _user$project$TextMeasure$Font;
 
-var _user$project$Comment$getFont = function (_p0) {
+var _user$project$Comment$getWidth = function (_p0) {
+	var _p1 = _p0;
+	return _elm_lang$lazy$Lazy$force(_p1._0.width);
+};
+var _user$project$Comment$getFont = function (_p2) {
 	return A2(_user$project$TextMeasure$font, 'Arial', 30);
 };
 var _user$project$Comment$styleAttributes = function (comment) {
@@ -8845,28 +9008,28 @@ var _user$project$Comment$styleAttributes = function (comment) {
 		}
 		]);
 };
-var _user$project$Comment$encode = function (_p1) {
-	var _p2 = _p1;
-	var _p3 = _p2._0;
+var _user$project$Comment$encode = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4._0;
 	return _elm_lang$core$Json_Encode$object(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{
 				ctor: '_Tuple2',
 				_0: 'text',
-				_1: _elm_lang$core$Json_Encode$string(_p3.text)
+				_1: _elm_lang$core$Json_Encode$string(_p5.text)
 			},
 				{
 				ctor: '_Tuple2',
 				_0: 'time',
 				_1: _elm_lang$core$Json_Encode$float(
-					_elm_lang$core$Time$inMilliseconds(_p3.time))
+					_elm_lang$core$Time$inMilliseconds(_p5.time))
 			}
 			]));
 };
-var _user$project$Comment$encodeList = function (_p4) {
+var _user$project$Comment$encodeList = function (_p6) {
 	return _elm_lang$core$Json_Encode$list(
-		A2(_elm_lang$core$List$map, _user$project$Comment$encode, _p4));
+		A2(_elm_lang$core$List$map, _user$project$Comment$encode, _p6));
 };
 var _user$project$Comment$timeDecoder = A2(
 	_elm_lang$core$Json_Decode$map,
@@ -8875,13 +9038,13 @@ var _user$project$Comment$timeDecoder = A2(
 			return x * y;
 		})(_elm_lang$core$Time$millisecond),
 	_elm_lang$core$Json_Decode$float);
-var _user$project$Comment$time = function (_p5) {
-	var _p6 = _p5;
-	return _p6._0.time;
-};
-var _user$project$Comment$text = function (_p7) {
+var _user$project$Comment$time = function (_p7) {
 	var _p8 = _p7;
-	return _p8._0.text;
+	return _p8._0.time;
+};
+var _user$project$Comment$text = function (_p9) {
+	var _p10 = _p9;
+	return _p10._0.text;
 };
 var _user$project$Comment$getHeight = function (c) {
 	return A2(
@@ -8889,20 +9052,32 @@ var _user$project$Comment$getHeight = function (c) {
 		_user$project$Comment$getFont(c),
 		_user$project$Comment$text(c));
 };
-var _user$project$Comment$getWidth = function (c) {
-	return A2(
-		_user$project$TextMeasure$measure,
-		_user$project$Comment$getFont(c),
-		_user$project$Comment$text(c));
-};
+var _user$project$Comment$CommentBase = F2(
+	function (a, b) {
+		return {text: a, time: b};
+	});
 var _user$project$Comment$Comment = function (a) {
 	return {ctor: 'Comment', _0: a};
+};
+var _user$project$Comment$makeComment = function (fields) {
+	return _user$project$Comment$Comment(
+		{
+			text: fields.text,
+			time: fields.time,
+			width: _elm_lang$lazy$Lazy$lazy(
+				function (_p11) {
+					return A2(
+						_user$project$TextMeasure$measure,
+						_user$project$Comment$getFont(0),
+						fields.text);
+				})
+		});
 };
 var _user$project$Comment$decode = A3(
 	_elm_lang$core$Json_Decode$object2,
 	F2(
 		function (s, t) {
-			return _user$project$Comment$Comment(
+			return _user$project$Comment$makeComment(
 				{text: s, time: t});
 		}),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string),
@@ -8997,7 +9172,7 @@ var _user$project$LazyUtil$foldr = function (reduce) {
 						});
 				});
 		});
-	return _elm_lang$core$List$foldl(reduce$);
+	return _elm_lang$core$List$foldr(reduce$);
 };
 var _user$project$LazyUtil$foldl = function (reduce) {
 	var reduce$ = F2(
@@ -9016,22 +9191,21 @@ var _user$project$LazyUtil$foldl = function (reduce) {
 		});
 	return _elm_lang$core$List$foldl(reduce$);
 };
-var _user$project$LazyUtil$collect = function (lazies) {
+var _user$project$LazyUtil$collect = function () {
 	var reduce$ = F2(
 		function (a, b) {
 			return _elm_lang$lazy$Lazy$lazy(
 				_elm_lang$core$Basics$always(
 					A2(_elm_lang$core$List_ops['::'], a, b)));
 		});
-	return A3(
+	return A2(
 		_user$project$LazyUtil$foldl,
 		reduce$,
 		_elm_lang$lazy$Lazy$lazy(
 			_elm_lang$core$Basics$always(
 				_elm_lang$core$Native_List.fromArray(
-					[]))),
-		lazies);
-};
+					[]))));
+}();
 
 var _user$project$CommentLayout$minimumY = function (currHeight) {
 	var suggestedY = F2(
@@ -9039,23 +9213,13 @@ var _user$project$CommentLayout$minimumY = function (currHeight) {
 			var _p1 = _p0;
 			var _p3 = _p1._0;
 			var _p2 = _p1._1;
-			return A2(
-				_elm_lang$core$Debug$log,
-				A2(
-					_elm_lang$core$String$join,
-					',',
-					A2(
-						_elm_lang$core$List$map,
-						_elm_lang$core$Basics$toString,
-						_elm_lang$core$Native_List.fromArray(
-							[_p3, _p2, curr, currHeight]))),
-				(((_elm_lang$core$Native_Utils.cmp(_p3, curr) > 0) && (_elm_lang$core$Native_Utils.cmp(_p3, curr + currHeight) < 0)) || ((_elm_lang$core$Native_Utils.cmp(_p3, curr) < 1) && (_elm_lang$core$Native_Utils.cmp(_p3 + _p2, curr) > -1))) ? (_p3 + _p2) : curr);
+			return (((_elm_lang$core$Native_Utils.cmp(_p3, curr) > 0) && (_elm_lang$core$Native_Utils.cmp(_p3, curr + currHeight) < 0)) || ((_elm_lang$core$Native_Utils.cmp(_p3, curr) < 1) && (_elm_lang$core$Native_Utils.cmp(_p3 + _p2, curr) > -1))) ? (_p3 + _p2) : curr;
 		});
 	return A2(_elm_lang$core$List$foldl, suggestedY, 0);
 };
 var _user$project$CommentLayout$speed = F2(
 	function (containerWidth, c) {
-		return -100 / _elm_lang$core$Time$second;
+		return (0 - (100 + (_user$project$Comment$getWidth(c) * 0.4))) / _elm_lang$core$Time$second;
 	});
 var _user$project$CommentLayout$duration = F2(
 	function (containerWidth, c) {
@@ -9072,12 +9236,6 @@ var _user$project$CommentLayout$touchEdgeTime = F2(
 	function (containerWidth, c) {
 		return _user$project$CommentLayout$startTime(c) + (containerWidth / _elm_lang$core$Basics$abs(
 			A2(_user$project$CommentLayout$speed, containerWidth, c)));
-	});
-var _user$project$CommentLayout$willCollideX = F3(
-	function (containerWidth, curr, prev) {
-		return _elm_lang$core$Native_Utils.cmp(
-			A2(_user$project$CommentLayout$endTime, containerWidth, prev),
-			A2(_user$project$CommentLayout$touchEdgeTime, containerWidth, curr)) > 0;
 	});
 var _user$project$CommentLayout$xDeltaAtTime = F2(
 	function (_p4, t) {
@@ -9122,6 +9280,23 @@ var _user$project$CommentLayout$getComment = function (_p17) {
 	var _p18 = _p17;
 	return _p18._0.comment;
 };
+var _user$project$CommentLayout$willCollideX = F2(
+	function (curr, tween) {
+		var containerWidth = function (_p19) {
+			var _p20 = _p19;
+			return _p20._0.containerWidth;
+		}(tween);
+		var prev = _user$project$CommentLayout$getComment(tween);
+		return (_elm_lang$core$Native_Utils.cmp(
+			A2(_user$project$CommentLayout$endTime, containerWidth, prev),
+			A2(_user$project$CommentLayout$touchEdgeTime, containerWidth, curr)) > 0) || (_elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$Basics$abs(
+				A2(
+					_user$project$CommentLayout$xDeltaAtTime,
+					tween,
+					_user$project$Comment$time(curr))),
+			_user$project$Comment$getWidth(prev)) < 0);
+	});
 var _user$project$CommentLayout$CommentTween = function (a) {
 	return {ctor: 'CommentTween', _0: a};
 };
@@ -9133,36 +9308,18 @@ var _user$project$CommentLayout$appendComment = F3(
 				_user$project$Comment$getHeight(comment)),
 			A2(
 				_elm_lang$lazy$Lazy$map,
-				_elm_lang$core$Debug$log('4444'),
-				A2(
-					_elm_lang$lazy$Lazy$map,
-					_elm_lang$core$List$sortBy(_elm_lang$core$Basics$fst),
-					_user$project$LazyUtil$collect(
+				_elm_lang$core$List$sortBy(_elm_lang$core$Basics$fst),
+				_user$project$LazyUtil$collect(
+					A2(
+						_elm_lang$core$List$map,
+						_user$project$CommentLayout$getLazyYRange,
 						A2(
-							_elm_lang$core$Debug$log,
-							'3333',
+							_elm_lang$core$List$filter,
+							_user$project$CommentLayout$willCollideX(comment),
 							A2(
-								_elm_lang$core$List$map,
-								_user$project$CommentLayout$getLazyYRange,
-								A2(
-									_elm_lang$core$Debug$log,
-									'2222',
-									A2(
-										_elm_lang$core$List$filter,
-										function (_p19) {
-											return A3(
-												_user$project$CommentLayout$willCollideX,
-												containerWidth,
-												comment,
-												_user$project$CommentLayout$getComment(_p19));
-										},
-										A2(
-											_elm_lang$core$Debug$log,
-											'1111',
-											A2(
-												_user$project$CommentLayout$visibleDanmaku,
-												_user$project$Comment$time(comment),
-												danmaku))))))))));
+								_user$project$CommentLayout$visibleDanmaku,
+								_user$project$Comment$time(comment),
+								danmaku))))));
 		var tween = _user$project$CommentLayout$CommentTween(
 			{comment: comment, y: lazyY, initialX: containerWidth, containerWidth: containerWidth});
 		return A2(
@@ -9172,11 +9329,19 @@ var _user$project$CommentLayout$appendComment = F3(
 				[tween]));
 	});
 var _user$project$CommentLayout$danmaku = function (containerWidth) {
-	return A2(
-		_elm_lang$core$List$foldl,
-		_user$project$CommentLayout$appendComment(containerWidth),
-		_elm_lang$core$Native_List.fromArray(
-			[]));
+	var _p21 = containerWidth;
+	if (_p21 === 0) {
+		return function (_p22) {
+			return _elm_lang$core$Native_List.fromArray(
+				[]);
+		};
+	} else {
+		return A2(
+			_elm_lang$core$List$foldl,
+			_user$project$CommentLayout$appendComment(containerWidth),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	}
 };
 
 var _user$project$MenuComposer$Env = F2(
@@ -9387,6 +9552,9 @@ var _user$project$CommentViewer$view = function (_p0) {
 			]));
 };
 var _user$project$CommentViewer$slidingComments = _elm_lang$core$Native_Platform.incomingPort('slidingComments', _elm_lang$core$Json_Decode$value);
+var _user$project$CommentViewer$Resize = function (a) {
+	return {ctor: 'Resize', _0: a};
+};
 var _user$project$CommentViewer$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
@@ -9412,7 +9580,8 @@ var _user$project$CommentViewer$subscriptions = function (_p5) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_user$project$CommentViewer$slidingComments(_user$project$CommentViewer$receiveComments),
-				_elm_lang$animation_frame$AnimationFrame$times(_user$project$CommentViewer$Tick)
+				_elm_lang$animation_frame$AnimationFrame$times(_user$project$CommentViewer$Tick),
+				_elm_lang$window$Window$resizes(_user$project$CommentViewer$Resize)
 			]));
 };
 var _user$project$CommentViewer$Model = function (a) {
@@ -9427,46 +9596,67 @@ var _user$project$CommentViewer$init = {
 			danmaku: _elm_lang$core$Native_List.fromArray(
 				[]),
 			startTime: _elm_lang$core$Maybe$Nothing,
-			currentTime: _elm_lang$core$Maybe$Nothing
+			currentTime: _elm_lang$core$Maybe$Nothing,
+			size: {width: 0, height: 0}
 		}),
-	_1: _elm_lang$core$Platform_Cmd$none
+	_1: A3(_elm_lang$core$Task$perform, _elm_lang$core$Basics$identity, _user$project$CommentViewer$Resize, _elm_lang$window$Window$size)
 };
 var _user$project$CommentViewer$update = F2(
 	function (msg, _p6) {
 		var _p7 = _p6;
-		var _p11 = _p7._0;
+		var _p12 = _p7._0;
 		var _p8 = msg;
-		if (_p8.ctor === 'SetComments') {
-			var _p9 = _p8._0;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$CommentViewer$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p11,
-						{
-							comments: _p9,
-							danmaku: A2(_user$project$CommentLayout$danmaku, 1024, _p9)
-						})),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
-		} else {
-			var _p10 = _p8._0;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_user$project$CommentViewer$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p11,
-						{
-							startTime: _elm_lang$core$Maybe$oneOf(
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_p11.startTime,
-										_elm_lang$core$Maybe$Just(_p10)
-									])),
-							currentTime: _elm_lang$core$Maybe$Just(_p10)
-						})),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
+		switch (_p8.ctor) {
+			case 'SetComments':
+				var _p9 = _p8._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{
+								comments: _p9,
+								danmaku: A2(
+									_user$project$CommentLayout$danmaku,
+									_elm_lang$core$Basics$toFloat(_p12.size.width),
+									_p9)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'Tick':
+				var _p10 = _p8._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{
+								startTime: _elm_lang$core$Maybe$oneOf(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_p12.startTime,
+											_elm_lang$core$Maybe$Just(_p10)
+										])),
+								currentTime: _elm_lang$core$Maybe$Just(_p10)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			default:
+				var _p11 = _p8._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p12,
+							{
+								size: _p11,
+								danmaku: A2(
+									_user$project$CommentLayout$danmaku,
+									_elm_lang$core$Basics$toFloat(_p11.width),
+									_p12.comments)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 		}
 	});
 var _user$project$CommentViewer$main = {
