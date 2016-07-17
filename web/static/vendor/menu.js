@@ -9107,12 +9107,12 @@ var _user$project$API$getErrorMessage = function (error) {
 					]));
 	}
 };
-var _user$project$API$postCommentUrl = '/api/comments/add';
+var _user$project$API$apiHost = 'http://localhost:4000';
 var _user$project$API$getCommentUrl = F2(
 	function (anilistId, filename) {
 		return A2(
 			_evancz$elm_http$Http$url,
-			'/api/comments',
+			A2(_elm_lang$core$Basics_ops['++'], _user$project$API$apiHost, '/api/comments'),
 			_elm_lang$core$Native_List.fromArray(
 				[
 					{
@@ -9124,6 +9124,17 @@ var _user$project$API$getCommentUrl = F2(
 					{ctor: '_Tuple2', _0: 'source', _1: 'kari'}
 				]));
 	});
+var _user$project$API$getComments = F2(
+	function (anilistId, filename) {
+		return A2(
+			_elm_lang$core$Task$mapError,
+			_user$project$API$getErrorMessage,
+			A2(
+				_evancz$elm_http$Http$get,
+				_user$project$API$decodeCommentsResponse,
+				A2(_user$project$API$getCommentUrl, anilistId, filename)));
+	});
+var _user$project$API$postCommentUrl = A2(_elm_lang$core$Basics_ops['++'], _user$project$API$apiHost, '/api/comments/add');
 var _user$project$API$postComment = F4(
 	function (anilistId, filename, time, text) {
 		var body = _evancz$elm_http$Http$multipart(
@@ -9145,16 +9156,6 @@ var _user$project$API$postComment = F4(
 			_elm_lang$core$Task$mapError,
 			_user$project$API$getErrorMessage,
 			A3(_evancz$elm_http$Http$post, _user$project$API$decodeCommentResponse, _user$project$API$postCommentUrl, body));
-	});
-var _user$project$API$getComments = F2(
-	function (anilistId, filename) {
-		return A2(
-			_elm_lang$core$Task$mapError,
-			_user$project$API$getErrorMessage,
-			A2(
-				_evancz$elm_http$Http$get,
-				_user$project$API$decodeCommentsResponse,
-				A2(_user$project$API$getCommentUrl, anilistId, filename)));
 	});
 
 var _user$project$LazyUtil$foldr = function (reduce) {
@@ -9452,7 +9453,7 @@ var _user$project$MenuComposer$update = F2(
 
 var _user$project$CommentViewer$view = function (_p0) {
 	var _p1 = _p0;
-	var _p3 = _p1._0;
+	var _p2 = _p1._0;
 	var commentDiv = F2(
 		function (time, tween) {
 			var comment = _user$project$CommentLayout$getComment(tween);
@@ -9526,15 +9527,7 @@ var _user$project$CommentViewer$view = function (_p0) {
 						_user$project$Comment$text(comment))
 					]));
 		});
-	var delta = function () {
-		var _p2 = {ctor: '_Tuple2', _0: _p3.startTime, _1: _p3.currentTime};
-		if (((_p2.ctor === '_Tuple2') && (_p2._0.ctor === 'Just')) && (_p2._1.ctor === 'Just')) {
-			return _p2._1._0 - _p2._0._0;
-		} else {
-			return 0;
-		}
-	}();
-	var visibleComments = A2(_user$project$CommentLayout$visibleDanmaku, delta, _p3.danmaku);
+	var visibleComments = A2(_user$project$CommentLayout$visibleDanmaku, _p2.currentTime, _p2.danmaku);
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -9547,16 +9540,45 @@ var _user$project$CommentViewer$view = function (_p0) {
 					[]),
 				A2(
 					_elm_lang$core$List$map,
-					commentDiv(delta),
+					commentDiv(_p2.currentTime),
 					visibleComments))
 			]));
 };
 var _user$project$CommentViewer$slidingComments = _elm_lang$core$Native_Platform.incomingPort('slidingComments', _elm_lang$core$Json_Decode$value);
+var _user$project$CommentViewer$setTime = _elm_lang$core$Native_Platform.incomingPort('setTime', _elm_lang$core$Json_Decode$value);
+var _user$project$CommentViewer$setPlayState = _elm_lang$core$Native_Platform.incomingPort('setPlayState', _elm_lang$core$Json_Decode$bool);
+var _user$project$CommentViewer$NoOps = {ctor: 'NoOps'};
+var _user$project$CommentViewer$SetPlayState = function (a) {
+	return {ctor: 'SetPlayState', _0: a};
+};
+var _user$project$CommentViewer$SetTime = function (a) {
+	return {ctor: 'SetTime', _0: a};
+};
+var _user$project$CommentViewer$receiveExternalTime = function (value) {
+	var result = A2(
+		_elm_lang$core$Json_Decode$decodeValue,
+		A3(
+			_elm_lang$core$Json_Decode$tuple2,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				}),
+			_elm_lang$core$Json_Decode$float,
+			_elm_lang$core$Json_Decode$float),
+		value);
+	var _p3 = result;
+	if (_p3.ctor === 'Err') {
+		return A2(_elm_lang$core$Debug$log, _p3._0, _user$project$CommentViewer$NoOps);
+	} else {
+		return _user$project$CommentViewer$SetTime(
+			{ctor: '_Tuple2', _0: _p3._0._0 * _elm_lang$core$Time$second, _1: _p3._0._1});
+	}
+};
+var _user$project$CommentViewer$SystemTick = function (a) {
+	return {ctor: 'SystemTick', _0: a};
+};
 var _user$project$CommentViewer$Resize = function (a) {
 	return {ctor: 'Resize', _0: a};
-};
-var _user$project$CommentViewer$Tick = function (a) {
-	return {ctor: 'Tick', _0: a};
 };
 var _user$project$CommentViewer$SetComments = function (a) {
 	return {ctor: 'SetComments', _0: a};
@@ -9576,12 +9598,15 @@ var _user$project$CommentViewer$receiveComments = function (value) {
 	}
 };
 var _user$project$CommentViewer$subscriptions = function (_p5) {
+	var _p6 = _p5;
 	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_user$project$CommentViewer$slidingComments(_user$project$CommentViewer$receiveComments),
-				_elm_lang$animation_frame$AnimationFrame$times(_user$project$CommentViewer$Tick),
-				_elm_lang$window$Window$resizes(_user$project$CommentViewer$Resize)
+				_elm_lang$animation_frame$AnimationFrame$times(_user$project$CommentViewer$SystemTick),
+				_elm_lang$window$Window$resizes(_user$project$CommentViewer$Resize),
+				_user$project$CommentViewer$setTime(_user$project$CommentViewer$receiveExternalTime),
+				_user$project$CommentViewer$setPlayState(_user$project$CommentViewer$SetPlayState)
 			]));
 };
 var _user$project$CommentViewer$Model = function (a) {
@@ -9595,66 +9620,86 @@ var _user$project$CommentViewer$init = {
 				[]),
 			danmaku: _elm_lang$core$Native_List.fromArray(
 				[]),
-			startTime: _elm_lang$core$Maybe$Nothing,
-			currentTime: _elm_lang$core$Maybe$Nothing,
+			isPlaying: false,
+			currentTime: 0,
+			lastTick: 0,
 			size: {width: 0, height: 0}
 		}),
 	_1: A3(_elm_lang$core$Task$perform, _elm_lang$core$Basics$identity, _user$project$CommentViewer$Resize, _elm_lang$window$Window$size)
 };
 var _user$project$CommentViewer$update = F2(
-	function (msg, _p6) {
-		var _p7 = _p6;
-		var _p12 = _p7._0;
-		var _p8 = msg;
-		switch (_p8.ctor) {
+	function (msg, _p7) {
+		var _p8 = _p7;
+		var _p13 = _p8._0;
+		var _p9 = msg;
+		switch (_p9.ctor) {
 			case 'SetComments':
-				var _p9 = _p8._0;
+				var _p10 = _p9._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$CommentViewer$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p12,
+							_p13,
 							{
-								comments: _p9,
+								comments: _p10,
 								danmaku: A2(
 									_user$project$CommentLayout$danmaku,
-									_elm_lang$core$Basics$toFloat(_p12.size.width),
-									_p9)
+									_elm_lang$core$Basics$toFloat(_p13.size.width),
+									_p10)
 							})),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
-			case 'Tick':
-				var _p10 = _p8._0;
+			case 'Resize':
+				var _p11 = _p9._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$CommentViewer$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p12,
-							{
-								startTime: _elm_lang$core$Maybe$oneOf(
-									_elm_lang$core$Native_List.fromArray(
-										[
-											_p12.startTime,
-											_elm_lang$core$Maybe$Just(_p10)
-										])),
-								currentTime: _elm_lang$core$Maybe$Just(_p10)
-							})),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			default:
-				var _p11 = _p8._0;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_user$project$CommentViewer$Model(
-						_elm_lang$core$Native_Utils.update(
-							_p12,
+							_p13,
 							{
 								size: _p11,
 								danmaku: A2(
 									_user$project$CommentLayout$danmaku,
 									_elm_lang$core$Basics$toFloat(_p11.width),
-									_p12.comments)
+									_p13.comments)
 							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'SystemTick':
+				var _p12 = _p9._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p13,
+							{
+								lastTick: _p12,
+								currentTime: _p13.isPlaying ? (_p13.currentTime + (_p12 - _p13.lastTick)) : _p13.currentTime
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'SetTime':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p13,
+							{currentTime: _p9._0._0, lastTick: _p9._0._1})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'SetPlayState':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p13,
+							{isPlaying: _p9._0})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$CommentViewer$Model(_p13),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 		}
@@ -9708,7 +9753,10 @@ var _user$project$Menu$SetComments = function (a) {
 var _user$project$Menu$loadComment = F3(
 	function (source, anilistId, filename) {
 		var success = function (a) {
-			return _user$project$Menu$SetComments(a);
+			return A2(
+				_elm_lang$core$Debug$log,
+				'load comments',
+				_user$project$Menu$SetComments(a));
 		};
 		var fail = function (error) {
 			return A2(
@@ -9827,33 +9875,44 @@ var _user$project$Menu$init = function (flags) {
 var _user$project$Menu$update = F2(
 	function (msg, _p7) {
 		var _p8 = _p7;
-		var _p16 = _p8._0;
+		var _p17 = _p8._0;
 		var _p9 = msg;
 		switch (_p9.ctor) {
 			case 'SetFlags':
-				var _p10 = _p9._0;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_user$project$Menu$Model(
-						_elm_lang$core$Native_Utils.update(
-							_p16,
-							{
-								flags: _p10,
-								composer: A2(_user$project$MenuComposer$updateEnv, _p16.composer, _p10)
-							})),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'SwitchSource':
 				var _p11 = _p9._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p16,
-							{source: _p11})),
+							_p17,
+							{
+								flags: _p11,
+								composer: A2(_user$project$MenuComposer$updateEnv, _p17.composer, _p11),
+								comments: function () {
+									var _p10 = _p11.anilistId;
+									if (_p10 === -1) {
+										return _elm_lang$core$Native_List.fromArray(
+											[]);
+									} else {
+										return _p17.comments;
+									}
+								}()
+							})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p11, _p16.flags.anilistId, _p16.flags.filename),
+							A3(_user$project$Menu$loadComment, _p17.source, _p11.anilistId, _p11.filename)
+						]));
+			case 'SwitchSource':
+				var _p12 = _p9._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p17,
+							{source: _p12})),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A3(_user$project$Menu$loadComment, _p12, _p17.flags.anilistId, _p17.flags.filename),
 							A3(
 							_elm_lang$core$Task$perform,
 							_elm_lang$core$Basics$identity,
@@ -9864,35 +9923,38 @@ var _user$project$Menu$update = F2(
 										[]))))
 						]));
 			case 'SetComments':
-				var _p12 = _p9._0;
+				var _p13 = _p9._0;
 				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_user$project$Menu$Model(
-						_elm_lang$core$Native_Utils.update(
-							_p16,
-							{comments: _p12})),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_user$project$Menu$sendComments(_p12)
-						]));
+					_elm_lang$core$Debug$log,
+					'set comments',
+					A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_user$project$Menu$Model(
+							_elm_lang$core$Native_Utils.update(
+								_p17,
+								{comments: _p13})),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_user$project$Menu$sendComments(_p13)
+							])));
 			default:
-				var _p15 = _p9._0;
+				var _p16 = _p9._0;
 				var reloadCmd = function () {
-					var _p13 = _p15;
-					if (_p13.ctor === 'Sent') {
-						return A3(_user$project$Menu$loadComment, _p16.source, _p16.flags.anilistId, _p16.flags.filename);
+					var _p14 = _p16;
+					if (_p14.ctor === 'Sent') {
+						return A3(_user$project$Menu$loadComment, _p17.source, _p17.flags.anilistId, _p17.flags.filename);
 					} else {
 						return _elm_lang$core$Platform_Cmd$none;
 					}
 				}();
-				var _p14 = A2(_user$project$MenuComposer$update, _p15, _p16.composer);
-				var composerModel = _p14._0;
-				var cmd = _p14._1;
+				var _p15 = A2(_user$project$MenuComposer$update, _p16, _p17.composer);
+				var composerModel = _p15._0;
+				var cmd = _p15._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p16,
+							_p17,
 							{composer: composerModel})),
 					_elm_lang$core$Native_List.fromArray(
 						[
