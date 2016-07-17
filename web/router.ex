@@ -10,6 +10,7 @@ defmodule DanmakuApi.Router do
   end
 
   pipeline :api do
+    plug CORSPlug, [origin: "https://anime.soruly.hk"]
     plug :accepts, ["json"]
   end
 
@@ -24,6 +25,7 @@ defmodule DanmakuApi.Router do
     pipe_through :api
 
     get  "/comments", CommentController, :index
+    options   "/articles", CommentController, :options
     get  "/comments/add", CommentController, :create
     post "/comments/add", CommentController, :create
 
