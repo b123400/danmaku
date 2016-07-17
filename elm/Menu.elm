@@ -67,10 +67,15 @@ update msg (Model model) =
     SetFlags flags ->
       Model
         { model
-        | flags = flags 
+        | flags = flags
         , composer = MC.updateEnv model.composer flags
+        , comments =
+          case flags.anilistId of
+            -1 -> []
+            _  -> model.comments
         }
-      ! []
+      ! [ loadComment model.source flags.anilistId flags.filename
+        ]
 
     SwitchSource source ->
       Model
@@ -80,6 +85,7 @@ update msg (Model model) =
         ]
 
     SetComments c ->
+      Debug.log "set comments" <|
       Model { model | comments = c }
       ! [ sendComments c ]
 
@@ -101,8 +107,8 @@ view (Model model) =
   div []
     [ div [] [ model.source |> selectedText |> text ]
     , div [] [ model.comments
-               |> List.map C.text 
-               |> String.join "," 
+               |> List.map C.text
+               |> String.join ","
                |> text
              ]
     , switcher
