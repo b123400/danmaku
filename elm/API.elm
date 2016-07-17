@@ -6,6 +6,9 @@ import Task exposing (Task)
 import String
 import Comment as C exposing (Comment)
 
+apiHost : String
+apiHost = "http://localhost:4000"
+
 getComments : Int -> String -> Task String (List Comment)
 getComments anilistId filename =
   getCommentUrl anilistId filename
@@ -27,14 +30,14 @@ postComment anilistId filename time text =
     |> Task.mapError getErrorMessage
 
 getCommentUrl : Int -> String -> String
-getCommentUrl anilistId filename = 
-  Http.url "/api/comments"
+getCommentUrl anilistId filename =
+  Http.url (apiHost ++ "/api/comments")
     [ ("anilist_id", toString anilistId)
     , ("filename", filename)
     , ("source", "kari")
     ]
 
-postCommentUrl = "/api/comments/add"
+postCommentUrl = apiHost ++ "/api/comments/add"
 
 getErrorMessage : Http.Error -> String
 getErrorMessage error =

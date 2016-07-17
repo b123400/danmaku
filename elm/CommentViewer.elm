@@ -31,14 +31,18 @@ main =
 
 type Msg
   = SetComments (List Comment)
-  | Tick Time
   | Resize Size
+  | SystemTick Time
+  | SetTime (Time, Time) -- VideoTime, now
+  | SetPlayState Bool
+  | NoOps
 
 type Model = Model
   { comments : List Comment
   , danmaku : Danmaku
-  , startTime : Maybe Time
-  , currentTime : Maybe Time
+  , isPlaying : Bool
+  , currentTime : Time
+  , lastTick : Time
   , size : Size
   }
 
@@ -47,8 +51,9 @@ init =
   ( Model
       { comments = []
       , danmaku = []
-      , startTime = Nothing
-      , currentTime = Nothing
+      , isPlaying = False
+      , currentTime = 0
+      , lastTick = 0
       , size =
         { width = 0
         , height = 0
@@ -58,6 +63,8 @@ init =
   )
 
 port slidingComments : (JD.Value -> msg) -> Sub msg
+port setTime : (JD.Value -> msg) -> Sub msg
+port setPlayState : (Bool -> msg) -> Sub msg
 
 receiveComments value =
   let
@@ -67,11 +74,21 @@ receiveComments value =
     Ok comments -> SetComments comments
 
 
-subscriptions _ =
+receiveExternalTime value =
+  let
+    result = JD.decodeValue (JD.tuple2 (,) JD.float JD.float) value
+  in case result of
+    Err error      -> Debug.log error <| NoOps
+    Ok (time, now) -> SetTime (time * Time.second, now)
+
+
+subscriptions (Model model) =
   Sub.batch
     [ slidingComments receiveComments
-    , AnimationFrame.times Tick
+    , AnimationFrame.times SystemTick
     , Window.resizes Resize
+    , setTime receiveExternalTime
+    , setPlayState SetPlayState
     ]
 
 
@@ -86,14 +103,6 @@ update msg (Model model) =
         }
       ! []
 
-    Tick time ->
-      Model
-        { model
-        | startTime = Maybe.oneOf [model.startTime, Just time]
-        , currentTime = Just time
-        }
-      ! []
-
     Resize size ->
       Model
         { model
@@ -102,19 +111,42 @@ update msg (Model model) =
         }
       ! []
 
+    SystemTick time ->
+      Model
+        { model
+        | lastTick = time
+        , currentTime =
+          if model.isPlaying
+          then model.currentTime + (time - model.lastTick)
+          else model.currentTime
+        }
+      ! []
+
+    SetTime (time, now) ->
+      Model
+        { model
+        | currentTime = time
+        , lastTick = now
+        }
+      ! []
+
+    SetPlayState playing ->
+      Model
+        { model
+        | isPlaying = playing
+        }
+      ! []
+
+    NoOps -> (Model model) ! []
+
 
 view : Model -> Html Msg
 view (Model model) =
   let
 
-    delta =
-      case (model.startTime, model.currentTime) of
-        (Just start, Just current)->
-          current - start
-        _ -> 0
-
     visibleComments =
-      CommentLayout.visibleDanmaku delta model.danmaku
+      --Debug.log "visibles" <|
+      CommentLayout.visibleDanmaku model.currentTime model.danmaku
 
     commentDiv time tween =
       let comment = CommentLayout.getComment tween
@@ -137,5 +169,5 @@ view (Model model) =
           ]
   in
     div []
-      [ div [] <| List.map (commentDiv delta) visibleComments
+      [ div [] <| List.map (commentDiv model.currentTime) visibleComments
       ]

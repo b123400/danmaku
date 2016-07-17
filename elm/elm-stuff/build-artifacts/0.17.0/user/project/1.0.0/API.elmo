@@ -21,12 +21,12 @@ var _user$project$API$getErrorMessage = function (error) {
 					]));
 	}
 };
-var _user$project$API$postCommentUrl = '/api/comments/add';
+var _user$project$API$apiHost = 'http://localhost:4000';
 var _user$project$API$getCommentUrl = F2(
 	function (anilistId, filename) {
 		return A2(
 			_evancz$elm_http$Http$url,
-			'/api/comments',
+			A2(_elm_lang$core$Basics_ops['++'], _user$project$API$apiHost, '/api/comments'),
 			_elm_lang$core$Native_List.fromArray(
 				[
 					{
@@ -38,6 +38,17 @@ var _user$project$API$getCommentUrl = F2(
 					{ctor: '_Tuple2', _0: 'source', _1: 'kari'}
 				]));
 	});
+var _user$project$API$getComments = F2(
+	function (anilistId, filename) {
+		return A2(
+			_elm_lang$core$Task$mapError,
+			_user$project$API$getErrorMessage,
+			A2(
+				_evancz$elm_http$Http$get,
+				_user$project$API$decodeCommentsResponse,
+				A2(_user$project$API$getCommentUrl, anilistId, filename)));
+	});
+var _user$project$API$postCommentUrl = A2(_elm_lang$core$Basics_ops['++'], _user$project$API$apiHost, '/api/comments/add');
 var _user$project$API$postComment = F4(
 	function (anilistId, filename, time, text) {
 		var body = _evancz$elm_http$Http$multipart(
@@ -59,14 +70,4 @@ var _user$project$API$postComment = F4(
 			_elm_lang$core$Task$mapError,
 			_user$project$API$getErrorMessage,
 			A3(_evancz$elm_http$Http$post, _user$project$API$decodeCommentResponse, _user$project$API$postCommentUrl, body));
-	});
-var _user$project$API$getComments = F2(
-	function (anilistId, filename) {
-		return A2(
-			_elm_lang$core$Task$mapError,
-			_user$project$API$getErrorMessage,
-			A2(
-				_evancz$elm_http$Http$get,
-				_user$project$API$decodeCommentsResponse,
-				A2(_user$project$API$getCommentUrl, anilistId, filename)));
 	});
