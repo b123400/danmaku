@@ -9,6 +9,7 @@ guess(Filename, AnilistId) ->
     fun()-> ova_oad_special_and_preview(FilteredFilename) end,
     fun()-> sp_episode(FilteredFilename) end,
     fun()-> number_in_bracket(FilteredFilename, AnilistId) end,
+    fun()-> number_and_string_in_bracket(FilteredFilename, AnilistId) end,
     fun()-> ep_suffix(FilteredFilename) end,
     fun()-> ep_prefix(FilteredFilename) end,
     fun()-> first_sensible_number(FilteredFilename, AnilistId) end ],
@@ -28,6 +29,21 @@ remove_rubbish(Filename) ->
 % Match numbers in bracket with optional suffix
 % [13], [12.5], [14.5話]
 number_in_bracket(Filename, _AnilistId) ->
+  case re:run(Filename, "\\[([0-9]+(?:\\.[0-9]+)?)]*\\]", [global]) of
+    nomatch -> notfound;
+    {match, Captured} ->
+      Ranges = lists:map(fun([_, X | _])-> X end, Captured),
+      Substrings = substrings(Ranges, Filename),
+      Filtered = filter_nonsense(Substrings),
+      case Filtered of
+        []-> notfound;
+        [First | _] -> {found, First}
+      end
+  end.
+
+% Match numbers in bracket with optional suffix
+% [13], [12.5], [14.5話]
+number_and_string_in_bracket(Filename, _AnilistId) ->
   case re:run(Filename, "\\[([0-9]+(?:\\.[0-9]+)?)[^\\]]*\\]", [global]) of
     nomatch -> notfound;
     {match, Captured} ->
@@ -60,7 +76,7 @@ sp_episode(Filename)->
     {match, Captured} ->
       io:format("wwwwww ~p", [Captured]),
       Ranges = lists:map(fun([_, X | _])-> X end, Captured),
-      Substrings = substrings(Ranges, Filename), 
+      Substrings = substrings(Ranges, Filename),
       case Substrings of
         [] -> notfound;
         [First | _] -> {found, First}
