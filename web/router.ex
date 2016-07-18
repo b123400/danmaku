@@ -25,13 +25,11 @@ defmodule DanmakuApi.Router do
     pipe_through :api
 
     get  "/comments", CommentController, :index
-    options   "/articles", CommentController, :options
+    options "/articles", CommentController, :options
     get  "/comments/add", CommentController, :create
     post "/comments/add", CommentController, :create
 
     get "/episode", EpisodeController, :show
     post "/episode", EpisodeController, :update
-
-    get "/episode/guess", EpisodeController, :guess
   end
 end
