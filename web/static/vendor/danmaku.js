@@ -46,6 +46,15 @@
 			overlay.pause();
 		});
 
+		vjs.on('waiting', function() {
+			console.log('waiting');
+			overlay.pause();
+		});
+		vjs.on('waitEnd', function(){
+			console.log('wait end');
+			overlay.play();
+		});
+
 		vjs.on('ended', function() {
 			overlay.stop();
 		});
@@ -79,9 +88,6 @@
 		danmakuButton.addClass("vjs-danmaku-control");
 		var danmakuDom = $(".vjs-danmaku-control")
 			.attr('title','Danmaku')
-			.css({
-				float: 'right'
-			})
 			.insertAfter($(".vjs-fill-control"));
 
 		var commentViewer = Elm.CommentViewer.embed(danmakuOverlay.get(0));
@@ -95,6 +101,9 @@
 
 		elmMenu = menu;
 		elmCommentViewer = commentViewer;
+
+		$('<link href="http://localhost:4000/css/danmaku.css" rel="stylesheet" type="text/css">')
+		.appendTo("head");
 
 		return {
 			play: function(){

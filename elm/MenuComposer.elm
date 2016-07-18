@@ -1,7 +1,7 @@
 module MenuComposer exposing (Model, Msg(Sent), init, view, update, updateEnv)
 
 import Html exposing (Html, button, div, text, input)
-import Html.Attributes exposing (type', value, disabled)
+import Html.Attributes exposing (type', value, disabled, style, class)
 import Html.Events exposing (onInput, onClick)
 import Json.Decode as D exposing ((:=), string)
 import Platform.Cmd as Cmd exposing ((!))
@@ -42,7 +42,9 @@ updateEnv (Model model) env = Model
 
 view : Model -> Html Msg
 view (Model model) =
-  div []
+  div
+    [ class "danmaku-composer"
+    ]
     [ input
       [ type' "text"
       , value model.text
@@ -64,7 +66,7 @@ update msg (Model model) =
       Model { model | text = text } ! []
 
     Send ->
-      Model 
+      Model
         { model
         | text = ""
         , isLoading = True

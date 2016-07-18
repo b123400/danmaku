@@ -3,6 +3,7 @@ port module Menu exposing (..)
 import Html exposing (Html, button, div, text)
 import Html.App as Html
 import Html.Events exposing (onClick)
+import Html.Attributes exposing (class)
 import Platform.Sub as Sub
 import Platform.Cmd as Cmd exposing ((!))
 import Task
@@ -105,15 +106,9 @@ update msg (Model model) =
 view : Model -> Html Msg
 view (Model model) =
   div []
-    [ div [] [ model.source |> selectedText |> text ]
-    , div [] [ model.comments
-               |> List.map C.text
-               |> String.join ","
-               |> text
-             ]
-    , switcher
-    , MC.view model.composer
+    [ MC.view model.composer
       |> Html.map ComposerMsg
+    , switcher model.source
     ]
 
 
@@ -124,11 +119,10 @@ selectedText source =
     None -> "None"
 
 
-switcher =
-  div []
-    [ button [onClick <| SwitchSource Kari ] [ text "kari" ]
-    , button [onClick <| SwitchSource None ] [ text "none" ]
-    ]
+switcher source =
+  case source of
+    None -> button [ class "danmaku-menu-switcher-button", onClick <| SwitchSource Kari ] [ text "Danmaku OFF" ]
+    Kari -> button [ class "danmaku-menu-switcher-button", onClick <| SwitchSource None ] [ text "Danmaku ON" ]
 
 
 loadComment : CommentSource -> Int -> String -> Cmd Msg

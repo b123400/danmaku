@@ -149,18 +149,20 @@ view (Model model) =
       CommentLayout.visibleDanmaku model.currentTime model.danmaku
 
     commentDiv time tween =
-      let comment = CommentLayout.getComment tween
+      let
+        comment = CommentLayout.getComment tween
+        x = CommentLayout.xDeltaAtTime tween time + CommentLayout.getInitialX tween
+        y = CommentLayout.getY tween
       in
         div
           [ style
-            ([("left", (toString <| CommentLayout.getInitialX tween) ++ "px")
-            , ("top", (toString <| CommentLayout.getY tween) ++ "px")
-            , ("transform", "translateX(" ++ (toString <| CommentLayout.xDeltaAtTime tween time) ++ "px)")
+            ([("left", "0px")
+            , ("top", "0px")
+            , ("transform" , "translate3d(" ++ (toString x) ++ "px, "++ (toString y) ++"px, 0)")
             , ("position", "absolute")
             , ("width",  (toString <| C.getWidth comment)  ++ "px")
             , ("height", (toString <| C.getHeight comment) ++ "px")
             , ("display", "block")
-            , ("background-color", "rgba(0, 1, 0, 0.3)")
             , ("overflow", "visible")
             ]
             ++ (C.styleAttributes comment))

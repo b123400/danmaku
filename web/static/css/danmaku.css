@@ -1,15 +1,39 @@
-.danmaku-menu {
-    position: absolute;
-    z-index: 90;
+.vjs-control.vjs-danmaku-control {
+	float: right;
+	margin-top: -24px;
+	margin-right: 50px;
+	width: 0px;
 }
 
-.danmaku-comments {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    background: #eeaaaa;
-    z-index: 89;
+.danmaku-menu-switcher-button {
+	border: 0;
+	background: black;
+	color: white;
+	width: 90px;
+	outline: none;
 }
 
+.danmaku-composer {
+	width: 360px;
+	height: 30px;
+	visibility: hidden;
+}
+
+.vjs-control.vjs-danmaku-control:hover .danmaku-composer {
+	visibility: visible;
+}
+
+
+.danmaku-composer input[type=text] {
+	width: 300px;
+	float: left;
+	font-size: 16px;
+}
+
+.danmaku-composer button {
+	border: solid 1px #555;
+	color: white;
+	background-color: black;
+	font-size: 16px;
+	float: left;
+}

@@ -9360,7 +9360,9 @@ var _user$project$MenuComposer$view = function (_p0) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$html$Html_Attributes$class('danmaku-composer')
+			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
@@ -9456,6 +9458,8 @@ var _user$project$CommentViewer$view = function (_p0) {
 	var _p2 = _p1._0;
 	var commentDiv = F2(
 		function (time, tween) {
+			var y = _user$project$CommentLayout$getY(tween);
+			var x = A2(_user$project$CommentLayout$xDeltaAtTime, tween, time) + _user$project$CommentLayout$getInitialX(tween);
 			var comment = _user$project$CommentLayout$getComment(tween);
 			return A2(
 				_elm_lang$html$Html$div,
@@ -9466,35 +9470,24 @@ var _user$project$CommentViewer$view = function (_p0) {
 							_elm_lang$core$Basics_ops['++'],
 							_elm_lang$core$Native_List.fromArray(
 								[
-									{
-									ctor: '_Tuple2',
-									_0: 'left',
-									_1: A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(
-											_user$project$CommentLayout$getInitialX(tween)),
-										'px')
-								},
-									{
-									ctor: '_Tuple2',
-									_0: 'top',
-									_1: A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(
-											_user$project$CommentLayout$getY(tween)),
-										'px')
-								},
+									{ctor: '_Tuple2', _0: 'left', _1: '0px'},
+									{ctor: '_Tuple2', _0: 'top', _1: '0px'},
 									{
 									ctor: '_Tuple2',
 									_0: 'transform',
 									_1: A2(
 										_elm_lang$core$Basics_ops['++'],
-										'translateX(',
+										'translate3d(',
 										A2(
 											_elm_lang$core$Basics_ops['++'],
-											_elm_lang$core$Basics$toString(
-												A2(_user$project$CommentLayout$xDeltaAtTime, tween, time)),
-											'px)'))
+											_elm_lang$core$Basics$toString(x),
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'px, ',
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													_elm_lang$core$Basics$toString(y),
+													'px, 0)'))))
 								},
 									{ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
 									{
@@ -9516,7 +9509,6 @@ var _user$project$CommentViewer$view = function (_p0) {
 										'px')
 								},
 									{ctor: '_Tuple2', _0: 'display', _1: 'block'},
-									{ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(0, 1, 0, 0.3)'},
 									{ctor: '_Tuple2', _0: 'overflow', _1: 'visible'}
 								]),
 							_user$project$Comment$styleAttributes(comment)))
@@ -9753,10 +9745,7 @@ var _user$project$Menu$SetComments = function (a) {
 var _user$project$Menu$loadComment = F3(
 	function (source, anilistId, filename) {
 		var success = function (a) {
-			return A2(
-				_elm_lang$core$Debug$log,
-				'load comments',
-				_user$project$Menu$SetComments(a));
+			return _user$project$Menu$SetComments(a);
 		};
 		var fail = function (error) {
 			return A2(
@@ -9789,38 +9778,39 @@ var _user$project$Menu$subscriptions = function (_p3) {
 };
 var _user$project$Menu$None = {ctor: 'None'};
 var _user$project$Menu$Kari = {ctor: 'Kari'};
-var _user$project$Menu$switcher = A2(
-	_elm_lang$html$Html$div,
-	_elm_lang$core$Native_List.fromArray(
-		[]),
-	_elm_lang$core$Native_List.fromArray(
-		[
-			A2(
+var _user$project$Menu$switcher = function (source) {
+	var _p4 = source;
+	if (_p4.ctor === 'None') {
+		return A2(
 			_elm_lang$html$Html$button,
 			_elm_lang$core$Native_List.fromArray(
 				[
+					_elm_lang$html$Html_Attributes$class('danmaku-menu-switcher-button'),
 					_elm_lang$html$Html_Events$onClick(
 					_user$project$Menu$SwitchSource(_user$project$Menu$Kari))
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$html$Html$text('kari')
-				])),
-			A2(
+					_elm_lang$html$Html$text('Danmaku OFF')
+				]));
+	} else {
+		return A2(
 			_elm_lang$html$Html$button,
 			_elm_lang$core$Native_List.fromArray(
 				[
+					_elm_lang$html$Html_Attributes$class('danmaku-menu-switcher-button'),
 					_elm_lang$html$Html_Events$onClick(
 					_user$project$Menu$SwitchSource(_user$project$Menu$None))
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$html$Html$text('none')
-				]))
-		]));
-var _user$project$Menu$view = function (_p4) {
-	var _p5 = _p4;
-	var _p6 = _p5._0;
+					_elm_lang$html$Html$text('Danmaku ON')
+				]));
+	}
+};
+var _user$project$Menu$view = function (_p5) {
+	var _p6 = _p5;
+	var _p7 = _p6._0;
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -9828,31 +9818,10 @@ var _user$project$Menu$view = function (_p4) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(
-						_user$project$Menu$selectedText(_p6.source))
-					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(
-						A2(
-							_elm_lang$core$String$join,
-							',',
-							A2(_elm_lang$core$List$map, _user$project$Comment$text, _p6.comments)))
-					])),
-				_user$project$Menu$switcher,
-				A2(
 				_elm_lang$html$Html_App$map,
 				_user$project$Menu$ComposerMsg,
-				_user$project$MenuComposer$view(_p6.composer))
+				_user$project$MenuComposer$view(_p7.composer)),
+				_user$project$Menu$switcher(_p7.source)
 			]));
 };
 var _user$project$Menu$Model = function (a) {
@@ -9873,46 +9842,46 @@ var _user$project$Menu$init = function (flags) {
 	};
 };
 var _user$project$Menu$update = F2(
-	function (msg, _p7) {
-		var _p8 = _p7;
-		var _p17 = _p8._0;
-		var _p9 = msg;
-		switch (_p9.ctor) {
+	function (msg, _p8) {
+		var _p9 = _p8;
+		var _p18 = _p9._0;
+		var _p10 = msg;
+		switch (_p10.ctor) {
 			case 'SetFlags':
-				var _p11 = _p9._0;
+				var _p12 = _p10._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p17,
+							_p18,
 							{
-								flags: _p11,
-								composer: A2(_user$project$MenuComposer$updateEnv, _p17.composer, _p11),
+								flags: _p12,
+								composer: A2(_user$project$MenuComposer$updateEnv, _p18.composer, _p12),
 								comments: function () {
-									var _p10 = _p11.anilistId;
-									if (_p10 === -1) {
+									var _p11 = _p12.anilistId;
+									if (_p11 === -1) {
 										return _elm_lang$core$Native_List.fromArray(
 											[]);
 									} else {
-										return _p17.comments;
+										return _p18.comments;
 									}
 								}()
 							})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p17.source, _p11.anilistId, _p11.filename)
+							A3(_user$project$Menu$loadComment, _p18.source, _p12.anilistId, _p12.filename)
 						]));
 			case 'SwitchSource':
-				var _p12 = _p9._0;
+				var _p13 = _p10._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p17,
-							{source: _p12})),
+							_p18,
+							{source: _p13})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p12, _p17.flags.anilistId, _p17.flags.filename),
+							A3(_user$project$Menu$loadComment, _p13, _p18.flags.anilistId, _p18.flags.filename),
 							A3(
 							_elm_lang$core$Task$perform,
 							_elm_lang$core$Basics$identity,
@@ -9923,7 +9892,7 @@ var _user$project$Menu$update = F2(
 										[]))))
 						]));
 			case 'SetComments':
-				var _p13 = _p9._0;
+				var _p14 = _p10._0;
 				return A2(
 					_elm_lang$core$Debug$log,
 					'set comments',
@@ -9931,30 +9900,30 @@ var _user$project$Menu$update = F2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_user$project$Menu$Model(
 							_elm_lang$core$Native_Utils.update(
-								_p17,
-								{comments: _p13})),
+								_p18,
+								{comments: _p14})),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_user$project$Menu$sendComments(_p13)
+								_user$project$Menu$sendComments(_p14)
 							])));
 			default:
-				var _p16 = _p9._0;
+				var _p17 = _p10._0;
 				var reloadCmd = function () {
-					var _p14 = _p16;
-					if (_p14.ctor === 'Sent') {
-						return A3(_user$project$Menu$loadComment, _p17.source, _p17.flags.anilistId, _p17.flags.filename);
+					var _p15 = _p17;
+					if (_p15.ctor === 'Sent') {
+						return A3(_user$project$Menu$loadComment, _p18.source, _p18.flags.anilistId, _p18.flags.filename);
 					} else {
 						return _elm_lang$core$Platform_Cmd$none;
 					}
 				}();
-				var _p15 = A2(_user$project$MenuComposer$update, _p16, _p17.composer);
-				var composerModel = _p15._0;
-				var cmd = _p15._1;
+				var _p16 = A2(_user$project$MenuComposer$update, _p17, _p18.composer);
+				var composerModel = _p16._0;
+				var cmd = _p16._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p17,
+							_p18,
 							{composer: composerModel})),
 					_elm_lang$core$Native_List.fromArray(
 						[
