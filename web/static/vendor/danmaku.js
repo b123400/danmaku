@@ -14,14 +14,23 @@
 		return parseInt(paths[paths.length-1]) || null;
 	})();
 
-	window.playfile = function() {
+	window.playfile = function(event,file) {
 		var result = originalPlayFile.apply(this, arguments);
 		if (!didObserveVjs) {
 			didObserveVjs = true;
 			var overlay = setupDanmakuOverlay();
 			observeVjs(overlay);
 		}
-		updateMenuSrc(currentAnilistId);
+
+		// hacky way to find filename
+		var filename;
+		if (!file) {
+			filename = $(this).find('a').attr('href');
+		} else {
+			filename = file.find('a').attr('href');
+		}
+
+		updateMenuSrc(currentAnilistId, filename);
 		console.log('current env', currentAnilistId);
 		return result;
 	};
@@ -123,8 +132,8 @@
 		}
 	}
 
-	function updateMenuSrc(anilistId) {
-		var currentSource = vjs.currentSrc();
+	function updateMenuSrc(anilistId, filename) {
+		var currentSource = filename;
 		var paths = currentSource.split('/');
 		var filename = paths[paths.length-1];
 		if (!filename) return;
