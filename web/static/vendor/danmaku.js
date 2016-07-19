@@ -17,6 +17,7 @@
 	window.playfile = function() {
 		var result = originalPlayFile.apply(this, arguments);
 		if (!didObserveVjs) {
+			didObserveVjs = true;
 			var overlay = setupDanmakuOverlay();
 			observeVjs(overlay);
 		}

@@ -86,7 +86,6 @@ update msg (Model model) =
         ]
 
     SetComments c ->
-      Debug.log "set comments" <|
       Model { model | comments = c }
       ! [ sendComments c ]
 

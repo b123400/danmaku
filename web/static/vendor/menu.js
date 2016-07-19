@@ -9987,18 +9987,15 @@ var _user$project$Menu$update = F2(
 			case 'SetComments':
 				var _p14 = _p10._0;
 				return A2(
-					_elm_lang$core$Debug$log,
-					'set comments',
-					A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_user$project$Menu$Model(
-							_elm_lang$core$Native_Utils.update(
-								_p18,
-								{comments: _p14})),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_user$project$Menu$sendComments(_p14)
-							])));
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p18,
+							{comments: _p14})),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$Menu$sendComments(_p14)
+						]));
 			default:
 				var _p17 = _p10._0;
 				var reloadCmd = function () {

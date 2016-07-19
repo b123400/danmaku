@@ -74,7 +74,6 @@ sp_episode(Filename)->
   case re:run(Filename, "\\W(SP\\W{0,1}[0-9]{1,2})") of
     nomatch -> notfound;
     {match, Captured} ->
-      io:format("wwwwww ~p", [Captured]),
       Ranges = lists:map(fun([_, X | _])-> X end, Captured),
       Substrings = substrings(Ranges, Filename),
       case Substrings of
