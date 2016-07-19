@@ -7,7 +7,7 @@ import String
 import Comment as C exposing (Comment)
 
 apiHost : String
-apiHost = "http://localhost:4000"
+apiHost = "https://danmaku.b123400.net"
 
 getComments : Int -> String -> Task String (List Comment)
 getComments anilistId filename =

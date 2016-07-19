@@ -8,8 +8,8 @@ defmodule DanmakuApi.CommentController do
 
   def index(conn, params) do
     source = params["source"]
-    anilist_id = "123" # params["anilist_id"]
-    param_episode = "45" # params["episode"]
+    anilist_id = params["anilist_id"]
+    param_episode = params["episode"]
     filename = params["filename"]
 
     if anilist_id == nil || (param_episode == nil && filename == nil) do

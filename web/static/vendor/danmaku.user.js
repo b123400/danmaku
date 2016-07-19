@@ -4,9 +4,9 @@
 // ==/UserScript==
 
 var elmTag = document.createElement('script');
-elmTag.src = "http://localhost:4000/js/menu.js";
+elmTag.src = "https://danmaku.b123400.net/js/menu.js";
 window.document.body.appendChild(elmTag);
 
 var scriptTag = document.createElement('script');
-scriptTag.src = "http://localhost:4000/js/danmaku.js";
+scriptTag.src = "https://danmaku.b123400.net/js/danmaku.js";
 window.document.body.appendChild(scriptTag);

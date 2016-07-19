@@ -102,7 +102,7 @@
 		elmMenu = menu;
 		elmCommentViewer = commentViewer;
 
-		$('<link href="http://localhost:4000/css/danmaku.css" rel="stylesheet" type="text/css">')
+		$('<link href="https://danmaku.b123400.net/css/danmaku.css" rel="stylesheet" type="text/css">')
 		.appendTo("head");
 
 		return {
