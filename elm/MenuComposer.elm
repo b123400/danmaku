@@ -1,4 +1,4 @@
-module MenuComposer exposing (Model, Msg(Sent), init, view, update, updateEnv)
+module MenuComposer exposing (Model, Msg(Sent), init, view, update, updateEnv, updateTime)
 
 import Html exposing (Html, button, div, text, input)
 import Html.Attributes exposing (type', value, disabled, style, class)
@@ -6,6 +6,7 @@ import Html.Events exposing (onInput, onClick)
 import Json.Decode as D exposing ((:=), string)
 import Platform.Cmd as Cmd exposing ((!))
 import Task
+import Time exposing (Time)
 import API
 
 type Msg
@@ -23,6 +24,7 @@ type Model = Model
   , filename : String
   , text : String
   , isLoading : Bool
+  , time : Time
   }
 
 
@@ -32,6 +34,7 @@ init flags = Model
   , filename = flags.filename
   , text = ""
   , isLoading = False
+  , time = 0
   }
 
 updateEnv (Model model) env = Model
@@ -39,6 +42,9 @@ updateEnv (Model model) env = Model
   | anilistId = env.anilistId
   , filename = env.filename
   }
+
+updateTime (Model model) time =
+  Model { model | time = time }
 
 view : Model -> Html Msg
 view (Model model) =
@@ -71,7 +77,7 @@ update msg (Model model) =
         | text = ""
         , isLoading = True
         }
-      ! [ sendComment model.anilistId model.filename model.text
+      ! [ sendComment model.anilistId model.filename model.time model.text
         ]
 
     Sent ->
@@ -80,10 +86,10 @@ update msg (Model model) =
       ! []
 
 
-sendComment : Int -> String -> String -> Cmd Msg
-sendComment anilistId filename text =
+sendComment : Int -> String -> Time -> String -> Cmd Msg
+sendComment anilistId filename time text =
   let
-    task = API.postComment anilistId filename 1000 text
+    task = API.postComment anilistId filename (Time.inMilliseconds time |> round) text
 
     fail error = SetText error
     success _ = Sent

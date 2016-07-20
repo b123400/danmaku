@@ -9482,15 +9482,21 @@ var _user$project$MenuComposer$view = function (_p0) {
 					]))
 			]));
 };
-var _user$project$MenuComposer$sendComment = F3(
-	function (anilistId, filename, text) {
+var _user$project$MenuComposer$sendComment = F4(
+	function (anilistId, filename, time, text) {
 		var success = function (_p3) {
 			return _user$project$MenuComposer$Sent;
 		};
 		var fail = function (error) {
 			return _user$project$MenuComposer$SetText(error);
 		};
-		var task = A4(_user$project$API$postComment, anilistId, filename, 1000, text);
+		var task = A4(
+			_user$project$API$postComment,
+			anilistId,
+			filename,
+			_elm_lang$core$Basics$round(
+				_elm_lang$core$Time$inMilliseconds(time)),
+			text);
 		return A3(_elm_lang$core$Task$perform, fail, success, task);
 	});
 var _user$project$MenuComposer$Model = function (a) {
@@ -9498,7 +9504,7 @@ var _user$project$MenuComposer$Model = function (a) {
 };
 var _user$project$MenuComposer$init = function (flags) {
 	return _user$project$MenuComposer$Model(
-		{anilistId: flags.anilistId, filename: flags.filename, text: '', isLoading: false});
+		{anilistId: flags.anilistId, filename: flags.filename, text: '', isLoading: false, time: 0});
 };
 var _user$project$MenuComposer$updateEnv = F2(
 	function (_p4, env) {
@@ -9508,19 +9514,27 @@ var _user$project$MenuComposer$updateEnv = F2(
 				_p5._0,
 				{anilistId: env.anilistId, filename: env.filename}));
 	});
-var _user$project$MenuComposer$update = F2(
-	function (msg, _p6) {
+var _user$project$MenuComposer$updateTime = F2(
+	function (_p6, time) {
 		var _p7 = _p6;
-		var _p9 = _p7._0;
-		var _p8 = msg;
-		switch (_p8.ctor) {
+		return _user$project$MenuComposer$Model(
+			_elm_lang$core$Native_Utils.update(
+				_p7._0,
+				{time: time}));
+	});
+var _user$project$MenuComposer$update = F2(
+	function (msg, _p8) {
+		var _p9 = _p8;
+		var _p11 = _p9._0;
+		var _p10 = msg;
+		switch (_p10.ctor) {
 			case 'SetText':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$MenuComposer$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p9,
-							{text: _p8._0})),
+							_p11,
+							{text: _p10._0})),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			case 'Send':
@@ -9528,18 +9542,18 @@ var _user$project$MenuComposer$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$MenuComposer$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p9,
+							_p11,
 							{text: '', isLoading: true})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$MenuComposer$sendComment, _p9.anilistId, _p9.filename, _p9.text)
+							A4(_user$project$MenuComposer$sendComment, _p11.anilistId, _p11.filename, _p11.time, _p11.text)
 						]));
 			default:
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$MenuComposer$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p9,
+							_p11,
 							{isLoading: false})),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -9825,10 +9839,14 @@ var _user$project$Menu$flags = _elm_lang$core$Native_Platform.incomingPort(
 						{anilistId: anilistId, filename: filename});
 				});
 		}));
+var _user$project$Menu$composerTime = _elm_lang$core$Native_Platform.incomingPort('composerTime', _elm_lang$core$Json_Decode$float);
 var _user$project$Menu$Flags = F2(
 	function (a, b) {
 		return {anilistId: a, filename: b};
 	});
+var _user$project$Menu$UpdateComposerTime = function (a) {
+	return {ctor: 'UpdateComposerTime', _0: a};
+};
 var _user$project$Menu$ComposerMsg = function (a) {
 	return {ctor: 'ComposerMsg', _0: a};
 };
@@ -9867,13 +9885,28 @@ var _user$project$Menu$SetFlags = function (a) {
 	return {ctor: 'SetFlags', _0: a};
 };
 var _user$project$Menu$subscriptions = function (_p3) {
-	return _user$project$Menu$flags(_user$project$Menu$SetFlags);
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Menu$flags(_user$project$Menu$SetFlags),
+				_user$project$Menu$composerTime(
+				function (_p4) {
+					return _user$project$Menu$UpdateComposerTime(
+						A2(
+							F2(
+								function (x, y) {
+									return x * y;
+								}),
+							_elm_lang$core$Time$second,
+							_p4));
+				})
+			]));
 };
 var _user$project$Menu$None = {ctor: 'None'};
 var _user$project$Menu$Kari = {ctor: 'Kari'};
 var _user$project$Menu$switcher = function (source) {
-	var _p4 = source;
-	if (_p4.ctor === 'None') {
+	var _p5 = source;
+	if (_p5.ctor === 'None') {
 		return A2(
 			_elm_lang$html$Html$button,
 			_elm_lang$core$Native_List.fromArray(
@@ -9901,9 +9934,9 @@ var _user$project$Menu$switcher = function (source) {
 				]));
 	}
 };
-var _user$project$Menu$view = function (_p5) {
-	var _p6 = _p5;
-	var _p7 = _p6._0;
+var _user$project$Menu$view = function (_p6) {
+	var _p7 = _p6;
+	var _p8 = _p7._0;
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -9913,8 +9946,8 @@ var _user$project$Menu$view = function (_p5) {
 				A2(
 				_elm_lang$html$Html_App$map,
 				_user$project$Menu$ComposerMsg,
-				_user$project$MenuComposer$view(_p7.composer)),
-				_user$project$Menu$switcher(_p7.source)
+				_user$project$MenuComposer$view(_p8.composer)),
+				_user$project$Menu$switcher(_p8.source)
 			]));
 };
 var _user$project$Menu$Model = function (a) {
@@ -9935,46 +9968,46 @@ var _user$project$Menu$init = function (flags) {
 	};
 };
 var _user$project$Menu$update = F2(
-	function (msg, _p8) {
-		var _p9 = _p8;
-		var _p18 = _p9._0;
-		var _p10 = msg;
-		switch (_p10.ctor) {
+	function (msg, _p9) {
+		var _p10 = _p9;
+		var _p19 = _p10._0;
+		var _p11 = msg;
+		switch (_p11.ctor) {
 			case 'SetFlags':
-				var _p12 = _p10._0;
+				var _p13 = _p11._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p18,
+							_p19,
 							{
-								flags: _p12,
-								composer: A2(_user$project$MenuComposer$updateEnv, _p18.composer, _p12),
+								flags: _p13,
+								composer: A2(_user$project$MenuComposer$updateEnv, _p19.composer, _p13),
 								comments: function () {
-									var _p11 = _p12.anilistId;
-									if (_p11 === -1) {
+									var _p12 = _p13.anilistId;
+									if (_p12 === -1) {
 										return _elm_lang$core$Native_List.fromArray(
 											[]);
 									} else {
-										return _p18.comments;
+										return _p19.comments;
 									}
 								}()
 							})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p18.source, _p12.anilistId, _p12.filename)
+							A3(_user$project$Menu$loadComment, _p19.source, _p13.anilistId, _p13.filename)
 						]));
 			case 'SwitchSource':
-				var _p13 = _p10._0;
+				var _p14 = _p11._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p18,
-							{source: _p13})),
+							_p19,
+							{source: _p14})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A3(_user$project$Menu$loadComment, _p13, _p18.flags.anilistId, _p18.flags.filename),
+							A3(_user$project$Menu$loadComment, _p14, _p19.flags.anilistId, _p19.flags.filename),
 							A3(
 							_elm_lang$core$Task$perform,
 							_elm_lang$core$Basics$identity,
@@ -9985,41 +10018,52 @@ var _user$project$Menu$update = F2(
 										[]))))
 						]));
 			case 'SetComments':
-				var _p14 = _p10._0;
+				var _p15 = _p11._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p18,
-							{comments: _p14})),
+							_p19,
+							{comments: _p15})),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_user$project$Menu$sendComments(_p14)
+							_user$project$Menu$sendComments(_p15)
 						]));
-			default:
-				var _p17 = _p10._0;
+			case 'ComposerMsg':
+				var _p18 = _p11._0;
 				var reloadCmd = function () {
-					var _p15 = _p17;
-					if (_p15.ctor === 'Sent') {
-						return A3(_user$project$Menu$loadComment, _p18.source, _p18.flags.anilistId, _p18.flags.filename);
+					var _p16 = _p18;
+					if (_p16.ctor === 'Sent') {
+						return A3(_user$project$Menu$loadComment, _p19.source, _p19.flags.anilistId, _p19.flags.filename);
 					} else {
 						return _elm_lang$core$Platform_Cmd$none;
 					}
 				}();
-				var _p16 = A2(_user$project$MenuComposer$update, _p17, _p18.composer);
-				var composerModel = _p16._0;
-				var cmd = _p16._1;
+				var _p17 = A2(_user$project$MenuComposer$update, _p18, _p19.composer);
+				var composerModel = _p17._0;
+				var cmd = _p17._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$Menu$Model(
 						_elm_lang$core$Native_Utils.update(
-							_p18,
+							_p19,
 							{composer: composerModel})),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							A2(_elm_lang$core$Platform_Cmd$map, _user$project$Menu$ComposerMsg, cmd),
 							reloadCmd
 						]));
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Menu$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p19,
+							{
+								composer: A2(_user$project$MenuComposer$updateTime, _p19.composer, _p11._0)
+							})),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 		}
 	});
 var _user$project$Menu$main = {

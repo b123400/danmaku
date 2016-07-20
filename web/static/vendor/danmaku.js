@@ -128,6 +128,7 @@
 			},
 			updateTime: function(seconds){
 				commentViewer.ports.setTime.send([seconds, Date.now()]);
+				elmMenu.ports.composerTime.send(seconds);
 			}
 		}
 	}

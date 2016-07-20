@@ -13,6 +13,7 @@ import Comment as C exposing (Comment)
 import API
 import MenuComposer as MC
 import Debug
+import Time exposing (Time)
 
 main =
   Html.programWithFlags
@@ -27,6 +28,7 @@ type Msg
   | SwitchSource CommentSource
   | SetComments (List Comment)
   | ComposerMsg MC.Msg
+  | UpdateComposerTime Time
 
 type CommentSource = Kari | None
 
@@ -59,8 +61,12 @@ sendComments = comments << C.encodeList
 
 
 port flags : (Flags -> msg) -> Sub msg
+port composerTime : (Float -> msg) -> Sub msg
 
-subscriptions _ = flags SetFlags
+subscriptions _ = Sub.batch
+  [ flags SetFlags
+  , composerTime (UpdateComposerTime << ((*) Time.second) )
+  ]
 
 
 update msg (Model model) =
@@ -101,6 +107,14 @@ update msg (Model model) =
         ! [ Cmd.map ComposerMsg cmd
           , reloadCmd
           ]
+
+    UpdateComposerTime time ->
+      Model
+        { model
+        | composer = MC.updateTime model.composer time
+        }
+      ! []
+
 
 view : Model -> Html Msg
 view (Model model) =
