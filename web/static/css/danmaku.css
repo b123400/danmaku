@@ -1,10 +1,10 @@
 .vjs-control.vjs-danmaku-control {
 	float: right;
-	margin-top: -24px;
 	width: 100px;
 }
 
 .danmaku-menu-switcher-button {
+	height: 30px;
 	border: 0;
 	background: transparent;
 	color: white;
@@ -20,6 +20,8 @@
 .danmaku-composer {
 	width: 360px;
 	height: 30px;
+	position: absolute;
+	left: 100px;
 	visibility: hidden;
 }
 
@@ -29,12 +31,15 @@
 
 
 .danmaku-composer input[type=text] {
-	width: 300px;
+	width: 285px;
+	height: 24px;
 	float: left;
 	font-size: 16px;
 }
 
 .danmaku-composer button {
+	height: 30px;
+	width: 50px;
 	border: solid 1px #555;
 	color: white;
 	background-color: black;
