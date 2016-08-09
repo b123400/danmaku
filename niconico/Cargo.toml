@@ -1,0 +1,10 @@
+[package]
+name = "niconico"
+version = "0.1.0"
+authors = ["Brian Chan <b123400@gmail.com>"]
+
+[dependencies]
+hyper = "0.9"
+
+[dependencies.url]
+git = "https://github.com/servo/rust-url"
