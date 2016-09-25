@@ -27,3 +27,5 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+
+config :danmaku_api, ecto_repos: []
