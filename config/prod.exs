@@ -13,7 +13,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :danmaku_api, DanmakuApi.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "example.com", port: 80],
+  url: [host: "danmaku.b123400.net", port: 80],
   cache_static_manifest: "priv/static/manifest.json"
 
 # Do not print debug messages in production
@@ -38,7 +38,7 @@ config :logger, level: :info
 # We also recommend setting `force_ssl`, ensuring no data is
 # ever sent via http, always redirecting to https:
 #
-#     config :danmaku_api, DanmakuApi.Endpoint,
+# config :danmaku_api, DanmakuApi.Endpoint
 #       force_ssl: [hsts: true]
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
@@ -48,17 +48,17 @@ config :logger, level: :info
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start the server for all endpoints:
 #
-#     config :phoenix, :serve_endpoints, true
+config :phoenix, :serve_endpoints, true
 #
 # Alternatively, you can configure exactly which server to
 # start per endpoint:
 #
-#     config :danmaku_api, DanmakuApi.Endpoint, server: true
+config :danmaku_api, DanmakuApi.Endpoint, server: true
 #
 # You will also need to set the application root to `.` in order
 # for the new static assets to be served after a hot upgrade:
 #
-#     config :danmaku_api, DanmakuApi.Endpoint, root: "."
+config :danmaku_api, DanmakuApi.Endpoint, root: "."
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
